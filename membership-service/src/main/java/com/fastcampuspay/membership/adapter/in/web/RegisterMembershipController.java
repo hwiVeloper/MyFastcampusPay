@@ -1,11 +1,14 @@
 package com.fastcampuspay.membership.adapter.in.web;
 
-import common.WebAdapter;
-import lombok.RequiredArgsConstructor;
+import com.fastcampuspay.common.WebAdapter;
 import com.fastcampuspay.membership.application.port.in.RegisterMembershipCommand;
 import com.fastcampuspay.membership.application.port.in.RegisterMembershipUseCase;
 import com.fastcampuspay.membership.domain.Membership;
-import org.springframework.web.bind.annotation.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @WebAdapter
 @RestController
