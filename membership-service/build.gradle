@@ -5,6 +5,7 @@ buildscript {
 }
 
 plugins {
+    id 'com.palantir.docker' version '0.25.0'
     id 'org.springframework.boot' version '2.5.2'
     id 'java'
 }
@@ -20,7 +21,7 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
 group 'org.fastcampuspay.membership'
-version '1.0-SNAPSHOT'
+version '1.0.3'
 
 repositories {
     mavenCentral()
@@ -48,9 +49,31 @@ dependencies {
 
     testImplementation 'junit:junit:4.13.1'
 
-    runtimeOnly 'com.h2database:h2'
+//    runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'mysql:mysql-connector-java'
 }
 
-test {
-    useJUnitPlatform()
+//test {
+//    useJUnitPlatform()
+//}
+
+//docker {
+//    println(tasks.bootJar.outputs.files)
+//    name rootProject.name+'-'+project.name+':'+version // 이미지 이름
+//    dockerfile file('./Dockerfile') // 어떤 Dockerfile
+//    files tasks.bootJar.outputs.files // 어떤 파일들을 Dockerfile에 복사할 것인가
+//    buildArgs(['JAR_FILE': tasks.bootJar.outputs.files.singleFile.name]) // Dockerfile에 전달할 인자
+//}
+
+docker {
+    // 디버깅용 println
+    println(tasks.bootJar.outputs.files)
+    // 이미지 이름
+    name rootProject.name + '-' + project.name + ":" + version
+    // 어떤 Dockerfile
+    dockerfile file('../Dockerfile')
+    // 어떤 파일들을 Dockerfiled에 복사할 것인가
+    files tasks.bootJar.outputs.files
+    // Dockerfile에 전달할 인자
+    buildArgs(['JAR_FILE': tasks.bootJar.outputs.files.singleFile.name])
 }
