@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 @WebAdapter
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/bankaccount")
+@RequestMapping("/banking")
 public class RegisterBankAccountController {
 
     private final RegisterBankAccountUseCase useCase;
 
-    @PostMapping(path = "/register")
+    @PostMapping(path = "/account/register")
     RegisteredBankAccount register(@RequestBody RegisterBankAccountRequest request) {
         RegisterBankAccountCommand command = RegisterBankAccountCommand.builder()
                 .membershipId(request.getMembershipId())
@@ -27,6 +27,12 @@ public class RegisterBankAccountController {
                 .linkedStatusIsValid(request.isLinkedStatusIsValid())
                 .build();
 
-        return useCase.registerBankAccount(command);
+        RegisteredBankAccount registeredBankAccount = useCase.registerBankAccount(command);
+        if (registeredBankAccount == null) {
+            // TODO: Error Handling
+            throw new RuntimeException("등록 실패");
+        }
+
+        return registeredBankAccount;
     }
 }

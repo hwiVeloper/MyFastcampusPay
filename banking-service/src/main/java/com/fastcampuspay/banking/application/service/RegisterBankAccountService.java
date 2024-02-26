@@ -2,6 +2,7 @@ package com.fastcampuspay.banking.application.service;
 
 import com.fastcampuspay.banking.adapter.out.external.bank.BankAccount;
 import com.fastcampuspay.banking.adapter.out.external.bank.GetBankAccountRequest;
+import com.fastcampuspay.banking.adapter.out.persistence.RegisteredBankAccountJpaEntity;
 import com.fastcampuspay.banking.adapter.out.persistence.RegisteredBankAccountMapper;
 import com.fastcampuspay.banking.application.port.in.RegisterBankAccountCommand;
 import com.fastcampuspay.banking.application.port.in.RegisterBankAccountUseCase;
@@ -36,9 +37,6 @@ public class RegisterBankAccountService implements RegisterBankAccountUseCase {
         // Port -> Adapter를 통해서 나감 (hexagonal architecture)
         // Port 정의
 
-        command.getBankName();
-        command.getBankAccountNumber();
-
         // 실제 외부의 은행계좌 정보를 Get
         BankAccount accountInfo = requestBankAccountInfoPort.getBankAccountInfo(new GetBankAccountRequest(command.getBankName(), command.getBankAccountNumber()));
         boolean accountIsValid = accountInfo.isValid();
@@ -46,11 +44,16 @@ public class RegisterBankAccountService implements RegisterBankAccountUseCase {
         // 2. 등록 가능한 계좌인지 확인. 성공하면 성공한 등록 정보를 리턴
         // 2-1. 등록가능하지 않은 계좌라면 에러를 리턴.
         if (accountIsValid) {
-            return null;
+            RegisteredBankAccountJpaEntity savedAccountInfo = port.createRegisteredBankAccount(
+                    new RegisteredBankAccount.MembershipId(command.getMembershipId()+""),
+                    new RegisteredBankAccount.BankName(command.getBankName()),
+                    new RegisteredBankAccount.BankAccountNumber(command.getBankAccountNumber()),
+                    new RegisteredBankAccount.LinkedStatusIsValid(command.isLinkedStatusIsValid())
+            );
+
+            return mapper.mapToDomainEntity(savedAccountInfo);
         } else {
             return null;
         }
-
-        return null;
     }
 }

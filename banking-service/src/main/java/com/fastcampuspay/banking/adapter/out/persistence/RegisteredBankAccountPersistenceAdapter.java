@@ -12,7 +12,7 @@ public class RegisteredBankAccountPersistenceAdapter implements RegisterBankAcco
     private final SpringDataRegisteredBankAccountRepository repository;
 
     @Override
-    public RegisteredBankAccountJpaEntity createRegisteredBankAccount(RegisteredBankAccount.RegisteredBankAccountId registeredBankAccountId, RegisteredBankAccount.MembershipId membershipId, RegisteredBankAccount.BankName bankName, RegisteredBankAccount.BankAccountNumber bankAccountNumber, RegisteredBankAccount.LinkedStatusIsValid linkedStatusIsValid) {
+    public RegisteredBankAccountJpaEntity createRegisteredBankAccount(RegisteredBankAccount.MembershipId membershipId, RegisteredBankAccount.BankName bankName, RegisteredBankAccount.BankAccountNumber bankAccountNumber, RegisteredBankAccount.LinkedStatusIsValid linkedStatusIsValid) {
         return repository.save(
                 new RegisteredBankAccountJpaEntity(
                         membershipId.getMembershipId(),

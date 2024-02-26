@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "membership")
+@Table(name = "registered_bank_account")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
