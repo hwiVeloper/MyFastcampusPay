@@ -20,8 +20,8 @@ apply plugin: 'java-library'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
-group 'com.fastcampuspay.membership'
-version '1.0.3'
+group 'com.fastcampuspay.banking'
+version '1.0.0'
 
 repositories {
     mavenCentral()
