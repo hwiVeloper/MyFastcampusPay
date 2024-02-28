@@ -3,6 +3,7 @@ package com.fastcampuspay.banking.adapter.in.web;
 import com.fastcampuspay.banking.application.port.in.RegisterBankAccountCommand;
 import com.fastcampuspay.banking.application.port.in.RequestFirmbankingCommand;
 import com.fastcampuspay.banking.application.port.in.RequestFirmbankingUseCase;
+import com.fastcampuspay.banking.domain.FirmbankingRequest;
 import com.fastcampuspay.banking.domain.RegisteredBankAccount;
 import com.fastcampuspay.common.WebAdapter;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ public class RequestFirmbankingController {
     private final RequestFirmbankingUseCase useCase;
 
     @PostMapping(path = "/firmbanking/request")
-    RegisteredBankAccount request(@RequestBody RequestFirmbankingRequest request) {
+    FirmbankingRequest request(@RequestBody RequestFirmbankingRequest request) {
         RequestFirmbankingCommand command = RequestFirmbankingCommand.builder()
                 .fromBankName(request.getFromBankName())
                 .fromBankAccountNumber(request.getFromBankAccountNumber())
@@ -29,13 +30,13 @@ public class RequestFirmbankingController {
                 .moneyAmount(request.getMoneyAmount())
                 .build();
 
-        RegisteredBankAccount registeredBankAccount = useCase.registerBankAccount(command);
-        if (registeredBankAccount == null) {
+        FirmbankingRequest firmbankingRequest = useCase.requestFirmbanking(command);
+        if (firmbankingRequest == null) {
             // TODO: Error Handling
             throw new RuntimeException("등록 실패");
         }
 
-        return registeredBankAccount;
+        return firmbankingRequest;
     }
 }
 

@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.UUID;
 
 @Entity
 @Table(name = "request_firmbanking")
@@ -33,12 +34,15 @@ public class FirmbankingRequestJpaEntity {
 
     private int firmbankingStatus;
 
-    public FirmbankingRequestJpaEntity(String fromBankName, String fromBankAccountNumber, String toBankName, String toBankAccountNumber, int moneyAmount, int firmbankingStatus) {
+    private String uuid;
+
+    public FirmbankingRequestJpaEntity(String fromBankName, String fromBankAccountNumber, String toBankName, String toBankAccountNumber, int moneyAmount, int firmbankingStatus, UUID uuid) {
         this.fromBankName = fromBankName;
         this.fromBankAccountNumber = fromBankAccountNumber;
         this.toBankName = toBankName;
         this.toBankAccountNumber = toBankAccountNumber;
         this.moneyAmount = moneyAmount;
         this.firmbankingStatus = firmbankingStatus;
+        this.uuid = uuid.toString();
     }
 }
