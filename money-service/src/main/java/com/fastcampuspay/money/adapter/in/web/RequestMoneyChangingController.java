@@ -1,8 +1,9 @@
 package com.fastcampuspay.money.adapter.in.web;
 
 import com.fastcampuspay.common.WebAdapter;
-import com.fastcampuspay.money.application.port.in.RegisterBankAccountCommand;
-import com.fastcampuspay.money.application.port.in.RegisterBankAccountUseCase;
+import com.fastcampuspay.money.application.port.in.IncreaseMoneyRequestCommand;
+import com.fastcampuspay.money.application.port.in.IncreaseMoneyRequestUseCase;
+import com.fastcampuspay.money.domain.MoneyChangingRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,25 +16,45 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/money")
 public class RequestMoneyChangingController {
 
-    private final RegisterBankAccountUseCase useCase;
+    private final IncreaseMoneyRequestUseCase iUseCase;
 
-    @PostMapping(path = "/account/register")
-    RegisteredBankAccount increaseMoneyChangingRequest(@RequestBody IncreaseMoneyChangingRequest request) {
-        RegisterBankAccountCommand command = RegisterBankAccountCommand.builder()
-                .membershipId(request.getMembershipId())
-                .bankName(request.getBankName())
-                .bankAccountNumber(request.getBankAccountNumber())
-                .linkedStatusIsValid(request.isLinkedStatusIsValid())
+    // private final DecreaseMoneyRequestUseCase dUseCase;
+
+    @PostMapping(path = "/increase")
+    MoneyChangingResultDetail increaseMoneyChangingRequest(@RequestBody IncreaseMoneyChangingRequest request) {
+        IncreaseMoneyRequestCommand command = IncreaseMoneyRequestCommand.builder()
+                .targetMembershipId(request.getTargetMembershipId())
+                .amount(request.getAmount())
                 .build();
 
-        RegisteredBankAccount registeredBankAccount = useCase.registerBankAccount(command);
-        if (registeredBankAccount == null) {
-            // TODO: Error Handling
-            throw new RuntimeException("등록 실패");
-        }
+        MoneyChangingRequest moneyChangingRequest = iUseCase.increaseMoneyRequest(command);
+        // MoneyChangingRequest -> MoneyChangingResultDetail
+        MoneyChangingResultDetail resultDetail = new MoneyChangingResultDetail(
+                moneyChangingRequest.getMoneyChangingRequestId(),
+                0,
+                1,
+                moneyChangingRequest.getChangingMoneyAmount()
+        );
 
-        return registeredBankAccount;
+        return resultDetail;
+    }
+
+    @PostMapping(path = "/decrease")
+    MoneyChangingResultDetail decreaseMoneyChangingRequest(@RequestBody IncreaseMoneyChangingRequest request) {
+//        IncreaseMoneyRequestCommand command = IncreaseMoneyRequestCommand.builder()
+//                .membershipId(request.getMembershipId())
+//                .bankName(request.getBankName())
+//                .bankAccountNumber(request.getBankAccountNumber())
+//                .linkedStatusIsValid(request.isLinkedStatusIsValid())
+//                .build();
+//
+//        RegisteredBankAccount registeredBankAccount = iUseCase.registerBankAccount(command);
+//        if (registeredBankAccount == null) {
+//            // TODO: Error Handling
+//            throw new RuntimeException("등록 실패");
+//        }
+//
+//        return registeredBankAccount;
+        return null;
     }
 }
-
-// TODO: 숙제 find하는거...

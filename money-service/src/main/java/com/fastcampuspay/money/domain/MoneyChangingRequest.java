@@ -16,7 +16,7 @@ public class MoneyChangingRequest {
     @Getter private final String targetMembershipId;
 
     // 증액인지 감액인지
-    @Getter private final ChangingType changingType; // 0: 증액, 1: 감액
+    @Getter private final int changingType; // 0: 증액, 1: 감액
     enum ChangingType {
         INCREASING,
         DECREASING
@@ -26,7 +26,7 @@ public class MoneyChangingRequest {
     @Getter private final int changingMoneyAmount;
 
     // 머니 변액 요청에 대한 상태
-    @Getter private final ChangingMoneyStatus changingMoneyStatus;
+    @Getter private final int changingMoneyStatus;
     enum ChangingMoneyStatus {
         REQUESTED,
         SUCCEEDED,
@@ -34,7 +34,7 @@ public class MoneyChangingRequest {
         CANCELLED
     }
 
-    @Getter private final String uuid;
+    @Getter private final UUID uuid;
 
     @Getter private final Date createdAt;
 
@@ -77,11 +77,11 @@ public class MoneyChangingRequest {
 
     @Value
     public static class MoneyChangingType {
-        public MoneyChangingType(ChangingType value) {
+        public MoneyChangingType(int value) {
             this.changingType = value;
         }
 
-        ChangingType changingType;
+        int changingType;
     }
 
     @Value
@@ -95,19 +95,19 @@ public class MoneyChangingRequest {
 
     @Value
     public static class MoneyChangingStatus {
-        public MoneyChangingStatus(ChangingMoneyStatus value) {
+        public MoneyChangingStatus(int value) {
             this.changingMoneyStatus = value;
         }
 
-        ChangingMoneyStatus changingMoneyStatus;
+        int changingMoneyStatus;
     }
 
     @Value
     public static class Uuid {
-        public Uuid(String value) {
-            this.uuid = value.toString();
+        public Uuid(UUID value) {
+            this.uuid = value;
         }
 
-        String uuid;
+        UUID uuid;
     }
 }

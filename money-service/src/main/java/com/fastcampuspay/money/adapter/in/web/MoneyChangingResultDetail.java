@@ -1,5 +1,6 @@
 package com.fastcampuspay.money.adapter.in.web;
 
+import com.fastcampuspay.money.domain.MoneyChangingRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,8 +11,8 @@ import lombok.NoArgsConstructor;
 public class MoneyChangingResultDetail {
     private String moneyChangingRequestId;
     // 증액, 감액
-    private MoneyChangingType moneyChangingType; // 0: 증액, 1: 감액
-    private MoneyChangingResultStatus moneyChangingResultStatus;
+    private int moneyChangingType; // 0: 증액, 1: 감액
+    private int moneyChangingResultStatus;
     private int amount;
 }
 
