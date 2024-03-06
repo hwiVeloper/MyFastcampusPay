@@ -12,14 +12,12 @@ import java.util.UUID;
 @Entity
 @Table(name = "member_money")
 @Data
-@AllArgsConstructor
+//@AllArgsConstructor
 @NoArgsConstructor
 @ToString
 public class MemberMoneyJpaEntity {
     @Id
     @GeneratedValue
-    private Long memberMoneyId;
-
     private String membershipId;
 
     private int balance;
