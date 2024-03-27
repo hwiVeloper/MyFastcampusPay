@@ -1,5 +1,6 @@
 package com.fastcampuspay.money.application.service;
 
+import com.fastcampuspay.common.CountDownLatchManager;
 import com.fastcampuspay.common.RechargingMoneyTask;
 import com.fastcampuspay.common.SubTask;
 import com.fastcampuspay.common.UseCase;
@@ -29,6 +30,8 @@ public class IncreaseMoneyRequestService implements IncreaseMoneyRequestUseCase 
     private final MoneyChangingRequestMapper mapper;
 
     private final SendRechargingMoneyTaskPort sendRechargingMoneyTaskPort;
+
+    private final CountDownLatchManager countDownLatchManager;
 
     @Override
     public MoneyChangingRequest increaseMoneyRequest(IncreaseMoneyRequestCommand command) {
@@ -109,11 +112,39 @@ public class IncreaseMoneyRequestService implements IncreaseMoneyRequestUseCase 
         sendRechargingMoneyTaskPort.sendRechargingMoneyTaskPort(task);
 
         // 3. Wait
+        try {
+            countDownLatchManager.getCountDownLatch("rechargingMoneyTask").await();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
         // 3-1. task-consumer
         // 등록된 subtask, status 모두 ok -> task 결과를 Produce
 
         // 4. Task result consume
+        // conutDownLatchManager에다가 응답 결과를 받아야 한다.
+        String result = countDownLatchManager.getDataForKey(task.getTaskID());
+        if ("success".equals(result)) {
+            MemberMoneyJpaEntity entity = port.increaseMoney(
+                    new MemberMoney.MembershipId(command.getTargetMembershipId()),
+                    command.getAmount()
+            );
+
+            if (entity != null) {
+                return mapper.mapToDomainEntity(
+                        port.createMoneyChangingRequest(
+                                new MoneyChangingRequest.TargetMembershipId(command.getTargetMembershipId()),
+                                new MoneyChangingRequest.MoneyChangingType(0),
+                                new MoneyChangingRequest.ChangingMoneyAmount(command.getAmount()),
+                                new MoneyChangingRequest.MoneyChangingStatus(1),
+                                new MoneyChangingRequest.Uuid(UUID.randomUUID())
+                        )
+                );
+            }
+        } else {
+            // fail
+            return null;
+        }
 
         // 5. Consume ok, logic...
         return null;
