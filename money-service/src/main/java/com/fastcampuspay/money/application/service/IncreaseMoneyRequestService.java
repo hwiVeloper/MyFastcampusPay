@@ -101,7 +101,7 @@ public class IncreaseMoneyRequestService implements IncreaseMoneyRequestUseCase 
 
         RechargingMoneyTask task = RechargingMoneyTask.builder()
                 .taskID(UUID.randomUUID().toString())
-                .taskName("Increase Money Task / 머니 충전 Task")
+                .taskName("rechargingMoneyTask")
                 .subTaskList(subTaskList)
                 .moneyAmount(command.getAmount())
                 .membershipID(command.getTargetMembershipId())
@@ -111,9 +111,15 @@ public class IncreaseMoneyRequestService implements IncreaseMoneyRequestUseCase 
         // 2. Kafka Cluster Produce
         sendRechargingMoneyTaskPort.sendRechargingMoneyTaskPort(task);
 
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
         // 3. Wait
         try {
-            countDownLatchManager.getCountDownLatch("rechargingMoneyTask").await();
+            countDownLatchManager.getCountDownLatch(task.getTaskID()).await();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

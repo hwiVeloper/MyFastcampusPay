@@ -51,7 +51,7 @@ public class RequestMoneyChangingController {
         MoneyChangingResultDetail resultDetail = new MoneyChangingResultDetail(
                 moneyChangingRequest.getMoneyChangingRequestId(),
                 0,
-                1,
+                0,
                 moneyChangingRequest.getChangingMoneyAmount()
         );
 
