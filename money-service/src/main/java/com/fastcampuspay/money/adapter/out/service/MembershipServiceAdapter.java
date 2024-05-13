@@ -14,7 +14,8 @@ public class MembershipServiceAdapter implements GetMembershipPort {
 
     private final String membershipServiceUrl;
 
-    public MembershipServiceAdapter(CommonHttpClient commonHttpClient, @Value("${service.membership.url}") String membershipServiceUrl) {
+    public MembershipServiceAdapter(CommonHttpClient commonHttpClient,
+                                     @Value("${service.membership.url}") String membershipServiceUrl) {
         this.commonHttpClient = commonHttpClient;
         this.membershipServiceUrl = membershipServiceUrl;
     }
@@ -22,15 +23,15 @@ public class MembershipServiceAdapter implements GetMembershipPort {
     @Override
     public MembershipStatus getMembership(String membershipId) {
 
-        // 실제 http Call
         String url = String.join("/", membershipServiceUrl, "membership", membershipId);
         try {
             String jsonResponse = commonHttpClient.sendGetRequest(url).body();
+            // json Membership
 
             ObjectMapper mapper = new ObjectMapper();
             Membership membership = mapper.readValue(jsonResponse, Membership.class);
 
-            if (membership.isValid()) {
+            if (membership.isValid()){
                 return new MembershipStatus(membership.getMembershipId(), true);
             } else {
                 return new MembershipStatus(membership.getMembershipId(), false);
@@ -38,6 +39,5 @@ public class MembershipServiceAdapter implements GetMembershipPort {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        // http client
     }
 }

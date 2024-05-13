@@ -29,7 +29,6 @@ public class RechargingMoneyResultConsumer {
                                          @Value("${task.result.topic}")String topic, LoggingProducer loggingProducer, CountDownLatchManager countDownLatchManager) {
         this.loggingProducer = loggingProducer;
         this.countDownLatchManager = countDownLatchManager;
-
         Properties props = new Properties();
         props.put("bootstrap.servers", bootstrapServers);
         props.put("group.id", "my-group");
@@ -45,16 +44,10 @@ public class RechargingMoneyResultConsumer {
                     ConsumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(1));
                     for (ConsumerRecord<String, String> record : records) {
                         System.out.println("Received message: " + record.key()  + " / "+  record.value());
+                        // record: RechargingMoneyTask, ( all subtask is don)
 
-                        // record: RechargingMoneyTask (all subtask is done)
-                        try {
-                            Thread.sleep(3000);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
 
                         RechargingMoneyTask task;
-
                         try {
                             task = mapper.readValue(record.value(), RechargingMoneyTask.class);
                         } catch (JsonProcessingException e) {
@@ -80,12 +73,6 @@ public class RechargingMoneyResultConsumer {
                         } else{
                             this.loggingProducer.sendMessage(task.getTaskID(), "task failed");
                             this.countDownLatchManager.setDataForKey(task.getTaskID(), "failed");
-                        }
-
-                        try {
-                            Thread.sleep(3000);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
                         }
 
                         this.countDownLatchManager.getCountDownLatch(task.getTaskID()).countDown();

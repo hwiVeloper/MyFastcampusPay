@@ -3,27 +3,31 @@ package com.fastcampuspay.money.adapter.out.persistence;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
-import javax.persistence.*;
-import java.sql.Timestamp;
-import java.util.UUID;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "member_money")
 @Data
-//@AllArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
-@ToString
 public class MemberMoneyJpaEntity {
     @Id
     @GeneratedValue
-    private String membershipId;
+    private Long memberMoneyId;
+
+    private Long membershipId;
 
     private int balance;
 
-    public MemberMoneyJpaEntity(String membershipId, int balance) {
+    private String aggregateIdentifier;
+
+    public MemberMoneyJpaEntity(Long membershipId, int balance, String aggregateIdentifier) {
         this.membershipId = membershipId;
         this.balance = balance;
+        this.aggregateIdentifier = aggregateIdentifier;
     }
 }

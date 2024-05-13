@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Membership { // for banking-service
+public class Membership {
     private String membershipId;
     private String name;
     private String email;

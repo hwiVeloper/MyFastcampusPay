@@ -15,7 +15,6 @@ import java.util.Properties;
 public class TaskProducer implements SendRechargingMoneyTaskPort {
 
     private final KafkaProducer<String, String> producer;
-
     private final String topic;
 
     public TaskProducer(@Value("${kafka.clusters.bootstrapservers}") String bootstrapServers,
@@ -37,9 +36,7 @@ public class TaskProducer implements SendRechargingMoneyTaskPort {
     public void sendMessage(String key, RechargingMoneyTask value) {
         ObjectMapper mapper = new ObjectMapper();
         String jsonStringToProduce;
-
         // jsonString
-
         try {
             jsonStringToProduce = mapper.writeValueAsString(value);
         } catch (JsonProcessingException e) {
@@ -48,10 +45,12 @@ public class TaskProducer implements SendRechargingMoneyTaskPort {
         ProducerRecord<String, String> record = new ProducerRecord<>(topic, key, jsonStringToProduce);
         producer.send(record, (metadata, exception) -> {
             if (exception == null) {
-                //
+                // System.out.println("Message sent successfully. Offset: " + metadata.offset());
             } else {
                 exception.printStackTrace();
+                // System.err.println("Failed to send message: " + exception.getMessage());
             }
         });
     }
+
 }

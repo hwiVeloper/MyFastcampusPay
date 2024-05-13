@@ -5,26 +5,30 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Value;
 
-import java.util.Date;
-import java.util.UUID;
-
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class MemberMoney {
-
     @Getter private final String memberMoneyId;
 
     @Getter private final String membershipId;
 
-    @Getter private final int balance; // 0: 증액, 1: 감액
+    // 잔액
+    @Getter private final int balance;
 
-//    @Getter private final int linkedBankAccount;
+    @Getter private final String moneyAggregateIdentifier;
 
+    // @Getter private final int linkedBankAccount;
 
-    public static MemberMoney generateMemberMoney(MemberMoneyId memberMoneyId, MembershipId membershipId, Balance balance) {
+    public static MemberMoney generateMemberMoney (
+            MemberMoneyId memberMoneyId,
+            MembershipId membershipId,
+            MoneyBalance moneyBalance,
+            MoneyAggregateIdentifier moneyAggregateIdentifier
+    ){
         return new MemberMoney(
-                memberMoneyId.getMemberMoneyId(),
-                membershipId.getMembershipId(),
-                balance.getBalance()
+                memberMoneyId.memberMoneyId,
+                membershipId.membershipId,
+                moneyBalance.balance,
+                moneyAggregateIdentifier.moneyAggregateIdentifier
         );
     }
 
@@ -33,8 +37,7 @@ public class MemberMoney {
         public MemberMoneyId(String value) {
             this.memberMoneyId = value;
         }
-
-        String memberMoneyId;
+        String memberMoneyId ;
     }
 
     @Value
@@ -42,16 +45,22 @@ public class MemberMoney {
         public MembershipId(String value) {
             this.membershipId = value;
         }
-
-        String membershipId;
+        String membershipId ;
     }
 
     @Value
-    public static class Balance {
-        public Balance(int value) {
+    public static class MoneyBalance {
+        public MoneyBalance(int value) {
             this.balance = value;
         }
+        int balance ;
+    }
 
-        int balance;
+    @Value
+    public static class MoneyAggregateIdentifier {
+        public MoneyAggregateIdentifier(String value) {
+            this.moneyAggregateIdentifier = value;
+        }
+        String moneyAggregateIdentifier ;
     }
 }

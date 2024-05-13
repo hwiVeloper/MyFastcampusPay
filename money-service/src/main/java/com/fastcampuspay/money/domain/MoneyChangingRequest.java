@@ -6,53 +6,42 @@ import lombok.Getter;
 import lombok.Value;
 
 import java.util.Date;
-import java.util.UUID;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class MoneyChangingRequest {
     @Getter private final String moneyChangingRequestId;
 
-    // 어떤 고객의 증액/감액 요청을 했는지 멤버 정보
+    // 어떤 고객의 증액/감액 요청을 요청했는지의 멤버 정보
     @Getter private final String targetMembershipId;
 
-    // 증액인지 감액인지
-    @Getter private final int changingType; // 0: 증액, 1: 감액
-    enum ChangingType {
-        INCREASING,
-        DECREASING
-    }
+    // 그 요청이 증액 요청인지 / 감액 요청인지
+    @Getter private final int changingType; // enum. 0: 증액, 1: 감액
 
     // 증액 또는 감액 요청의 금액
     @Getter private final int changingMoneyAmount;
 
     // 머니 변액 요청에 대한 상태
-    @Getter private final int changingMoneyStatus;
-    enum ChangingMoneyStatus {
-        REQUESTED,
-        SUCCEEDED,
-        FAILED,
-        CANCELLED
-    }
+    @Getter private final int changingMoneyStatus; // enum. 0:요청, 1: 성공, 2: 실패
 
-    @Getter private final UUID uuid;
+    @Getter private final String uuid;
 
     @Getter private final Date createdAt;
 
-    public static MoneyChangingRequest generateMoneyChangingRequest(
+    public static MoneyChangingRequest generateMoneyChangingRequest (
             MoneyChangingRequestId moneyChangingRequestId,
             TargetMembershipId targetMembershipId,
             MoneyChangingType moneyChangingType,
             ChangingMoneyAmount changingMoneyAmount,
             MoneyChangingStatus moneyChangingStatus,
-            Uuid uuid
-    ) {
+            String uuid
+    ){
         return new MoneyChangingRequest(
                 moneyChangingRequestId.getMoneyChangingRequestId(),
                 targetMembershipId.getTargetMembershipId(),
-                moneyChangingType.getChangingType(),
+                moneyChangingType.getMoneyChangingType(),
                 changingMoneyAmount.getChangingMoneyAmount(),
                 moneyChangingStatus.getChangingMoneyStatus(),
-                uuid.getUuid(),
+                uuid,
                 new Date()
         );
     }
@@ -62,8 +51,7 @@ public class MoneyChangingRequest {
         public MoneyChangingRequestId(String value) {
             this.moneyChangingRequestId = value;
         }
-
-        String moneyChangingRequestId;
+        String moneyChangingRequestId ;
     }
 
     @Value
@@ -71,17 +59,15 @@ public class MoneyChangingRequest {
         public TargetMembershipId(String value) {
             this.targetMembershipId = value;
         }
-
-        String targetMembershipId;
+        String targetMembershipId ;
     }
 
     @Value
     public static class MoneyChangingType {
         public MoneyChangingType(int value) {
-            this.changingType = value;
+            this.moneyChangingType = value;
         }
-
-        int changingType;
+        int moneyChangingType ;
     }
 
     @Value
@@ -89,8 +75,7 @@ public class MoneyChangingRequest {
         public ChangingMoneyAmount(int value) {
             this.changingMoneyAmount = value;
         }
-
-        int changingMoneyAmount;
+        int changingMoneyAmount ;
     }
 
     @Value
@@ -98,16 +83,14 @@ public class MoneyChangingRequest {
         public MoneyChangingStatus(int value) {
             this.changingMoneyStatus = value;
         }
-
-        int changingMoneyStatus;
+        int changingMoneyStatus ;
     }
 
     @Value
     public static class Uuid {
-        public Uuid(UUID value) {
-            this.uuid = value;
+        public Uuid(String uuid) {
+            this.uuid = uuid;
         }
-
-        UUID uuid;
+        String uuid ;
     }
 }
