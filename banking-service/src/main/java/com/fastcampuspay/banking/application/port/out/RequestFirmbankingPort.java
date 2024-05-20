@@ -4,16 +4,22 @@ import com.fastcampuspay.banking.adapter.out.persistence.FirmbankingRequestJpaEn
 import com.fastcampuspay.banking.domain.FirmbankingRequest;
 
 public interface RequestFirmbankingPort {
+
     FirmbankingRequestJpaEntity createFirmbankingRequest(
             FirmbankingRequest.FromBankName fromBankName,
             FirmbankingRequest.FromBankAccountNumber fromBankAccountNumber,
             FirmbankingRequest.ToBankName toBankName,
             FirmbankingRequest.ToBankAccountNumber toBankAccountNumber,
             FirmbankingRequest.MoneyAmount moneyAmount,
-            FirmbankingRequest.FirmbankingStatus firmbankingStatus
+            FirmbankingRequest.FirmbankingStatus firmbankingStatus,
+            FirmbankingRequest.AggregateIdentifier aggregateIdentifier
     );
 
     FirmbankingRequestJpaEntity modifyFirmbankingRequest(
             FirmbankingRequestJpaEntity entity
+    );
+
+    FirmbankingRequestJpaEntity getFirmbankingRequest(
+            FirmbankingRequest.AggregateIdentifier firmbankingaggregateIdentifier
     );
 }

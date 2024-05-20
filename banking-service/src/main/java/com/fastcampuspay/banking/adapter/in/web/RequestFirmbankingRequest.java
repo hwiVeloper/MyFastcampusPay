@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RequestFirmbankingRequest {
-    // a -> b 실물 계좌로 요청을 하기 위한 Request
+    // a -> b 실물계좌로 요청을 하기 위한 Request
     private String fromBankName;
     private String fromBankAccountNumber;
     private String toBankName;

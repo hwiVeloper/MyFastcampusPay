@@ -4,8 +4,8 @@ import com.fastcampuspay.banking.adapter.out.persistence.RegisteredBankAccountJp
 import com.fastcampuspay.banking.domain.RegisteredBankAccount;
 
 public interface RegisterBankAccountPort {
+
     RegisteredBankAccountJpaEntity createRegisteredBankAccount(
-//            RegisteredBankAccount.RegisteredBankAccountId registeredBankAccountId,
             RegisteredBankAccount.MembershipId membershipId,
             RegisteredBankAccount.BankName bankName,
             RegisteredBankAccount.BankAccountNumber bankAccountNumber,

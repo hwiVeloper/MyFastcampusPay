@@ -11,25 +11,25 @@ public class RegisteredBankAccount {
 
     @Getter private final String membershipId;
 
-    @Getter private final String bankName; // 추후 enum 대체
+    @Getter private final String bankName; // enum
 
     @Getter private final String bankAccountNumber;
 
     @Getter private final boolean linkedStatusIsValid;
 
-    public static RegisteredBankAccount generateRegisteredBankAccount(
+    public static RegisteredBankAccount generateRegisteredBankAccount (
             RegisteredBankAccount.RegisteredBankAccountId registeredBankAccountId,
             RegisteredBankAccount.MembershipId membershipId,
             RegisteredBankAccount.BankName bankName,
             RegisteredBankAccount.BankAccountNumber bankAccountNumber,
             RegisteredBankAccount.LinkedStatusIsValid linkedStatusIsValid
-    ) {
+    ){
         return new RegisteredBankAccount(
-                registeredBankAccountId.registeredBankAccountId,
-                membershipId.membershipId,
-                bankName.bankName,
-                bankAccountNumber.bankAccountNumber,
-                linkedStatusIsValid.linkedStatusIsValid
+            registeredBankAccountId.registeredBankAccountId,
+            membershipId.membershipId,
+            bankName.bankName,
+            bankAccountNumber.bankAccountNumber,
+            linkedStatusIsValid.linkedStatusIsValid
         );
     }
 
@@ -38,8 +38,7 @@ public class RegisteredBankAccount {
         public RegisteredBankAccountId(String value) {
             this.registeredBankAccountId = value;
         }
-
-        String registeredBankAccountId;
+        String registeredBankAccountId ;
     }
 
     @Value
@@ -47,8 +46,7 @@ public class RegisteredBankAccount {
         public MembershipId(String value) {
             this.membershipId = value;
         }
-
-        String membershipId;
+        String membershipId ;
     }
 
     @Value
@@ -56,8 +54,7 @@ public class RegisteredBankAccount {
         public BankName(String value) {
             this.bankName = value;
         }
-
-        String bankName;
+        String bankName ;
     }
 
     @Value
@@ -65,8 +62,7 @@ public class RegisteredBankAccount {
         public BankAccountNumber(String value) {
             this.bankAccountNumber = value;
         }
-
-        String bankAccountNumber;
+        String bankAccountNumber ;
     }
 
     @Value
@@ -74,7 +70,6 @@ public class RegisteredBankAccount {
         public LinkedStatusIsValid(boolean value) {
             this.linkedStatusIsValid = value;
         }
-
-        boolean linkedStatusIsValid;
+        boolean linkedStatusIsValid ;
     }
 }

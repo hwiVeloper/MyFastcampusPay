@@ -1,6 +1,8 @@
 package com.fastcampuspay.banking.adapter.out.persistence;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,7 +14,6 @@ import javax.persistence.Table;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 public class RegisteredBankAccountJpaEntity {
     @Id
     @GeneratedValue
@@ -20,7 +21,7 @@ public class RegisteredBankAccountJpaEntity {
 
     private String membershipId;
 
-    private String bankName; // 추후 enum 대체
+    private String bankName;
 
     private String bankAccountNumber;
 
@@ -31,5 +32,16 @@ public class RegisteredBankAccountJpaEntity {
         this.bankName = bankName;
         this.bankAccountNumber = bankAccountNumber;
         this.linkedStatusIsValid = linkedStatusIsValid;
+    }
+
+    @Override
+    public String toString() {
+        return "RegisteredBankAccountJpaEntity{" +
+                "registeredBankAccountId=" + registeredBankAccountId +
+                ", membershipId='" + membershipId + '\'' +
+                ", bankName='" + bankName + '\'' +
+                ", bankAccountNumber='" + bankAccountNumber + '\'' +
+                ", linkedStatusIsValid=" + linkedStatusIsValid +
+                '}';
     }
 }

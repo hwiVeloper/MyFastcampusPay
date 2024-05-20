@@ -3,7 +3,6 @@ package com.fastcampuspay.banking.adapter.out.persistence;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,7 +15,6 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 public class FirmbankingRequestJpaEntity {
     @Id
     @GeneratedValue
@@ -24,19 +22,21 @@ public class FirmbankingRequestJpaEntity {
 
     private String fromBankName;
 
-    private String fromBankAccountNumber;
+    private  String fromBankAccountNumber;
 
-    private String toBankName;
+    private  String toBankName;
 
-    private String toBankAccountNumber;
+    private  String toBankAccountNumber;
 
-    private int moneyAmount;
+    private int moneyAmount; // only won
 
-    private int firmbankingStatus;
+    private int firmbankingStatus; // 0: 요청, 1: 완료, 2: 실패
 
     private String uuid;
 
-    public FirmbankingRequestJpaEntity(String fromBankName, String fromBankAccountNumber, String toBankName, String toBankAccountNumber, int moneyAmount, int firmbankingStatus, UUID uuid) {
+    private String aggregateIdentifier;
+
+    public FirmbankingRequestJpaEntity(String fromBankName, String fromBankAccountNumber, String toBankName, String toBankAccountNumber, int moneyAmount, int firmbankingStatus, UUID uuid, String aggregateIdentifier) {
         this.fromBankName = fromBankName;
         this.fromBankAccountNumber = fromBankAccountNumber;
         this.toBankName = toBankName;
@@ -44,5 +44,21 @@ public class FirmbankingRequestJpaEntity {
         this.moneyAmount = moneyAmount;
         this.firmbankingStatus = firmbankingStatus;
         this.uuid = uuid.toString();
+        this.aggregateIdentifier = aggregateIdentifier;
+    }
+
+    @Override
+    public String toString() {
+        return "FirmbankingRequestJpaEntity{" +
+                "requestFirmbankingId=" + requestFirmbankingId +
+                ", fromBankName='" + fromBankName + '\'' +
+                ", fromBankAccountNumber='" + fromBankAccountNumber + '\'' +
+                ", toBankName='" + toBankName + '\'' +
+                ", toBankAccountNumber='" + toBankAccountNumber + '\'' +
+                ", moneyAmount=" + moneyAmount +
+                ", firmbankingStatus=" + firmbankingStatus +
+                ", uuid='" + uuid + '\'' +
+                ", aggregateIdentifier='" + aggregateIdentifier + '\'' +
+                '}';
     }
 }
