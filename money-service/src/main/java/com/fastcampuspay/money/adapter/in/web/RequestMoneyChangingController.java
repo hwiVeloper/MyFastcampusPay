@@ -21,7 +21,6 @@ public class RequestMoneyChangingController {
     // private final DecreaseMoneyRequestUseCase decreaseMoneyRequestUseCase;
 
     private final CreateMemberMoneyUseCase createMemberMoneyUseCase;
-
     @PostMapping(path = "/money/increase")
     MoneyChangingResultDetail increaseMoneyChangingRequest(@RequestBody IncreaseMoneyChangingRequest request) {
         IncreaseMoneyRequestCommand command = IncreaseMoneyRequestCommand.builder()
@@ -74,13 +73,12 @@ public class RequestMoneyChangingController {
     }
 
     @PostMapping(path = "/money/create-member-money")
-    void createMemberMoney(@RequestBody CreateMemberMoneyRequest request) {
-        createMemberMoneyUseCase.createMemberMoney(CreateMemberMoneyCommand.builder()
-                .membershipId(request.getMembershipId())
-                .build());
+    void createMemberMoney (@RequestBody CreateMemberMoneyRequest request) {
+        createMemberMoneyUseCase.createMemberMoney(
+                CreateMemberMoneyCommand.builder().membershipId(request.getMembershipId()).build());
     }
 
-    @PostMapping("/money/increase-eda")
+    @PostMapping(path = "/money/increase-eda")
     void increaseMoneyChangingRequestByEvent(@RequestBody IncreaseMoneyChangingRequest request) {
         IncreaseMoneyRequestCommand command = IncreaseMoneyRequestCommand.builder()
                 .targetMembershipId(request.getTargetMembershipId())

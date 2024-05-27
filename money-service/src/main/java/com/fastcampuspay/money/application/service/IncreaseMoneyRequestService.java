@@ -4,8 +4,9 @@ import com.fastcampuspay.common.CountDownLatchManager;
 import com.fastcampuspay.common.RechargingMoneyTask;
 import com.fastcampuspay.common.SubTask;
 import com.fastcampuspay.common.UseCase;
-import com.fastcampuspay.money.adapter.in.axon.command.IncreaseMemberMoneyCommand;
-import com.fastcampuspay.money.adapter.in.axon.command.MemberMoneyCreatedCommand;
+import com.fastcampuspay.money.adapter.axon.command.IncreaseMemberMoneyCommand;
+import com.fastcampuspay.money.adapter.axon.command.MemberMoneyCreatedCommand;
+import com.fastcampuspay.money.adapter.axon.command.RechargingMoneyRequestCreateCommand;
 import com.fastcampuspay.money.adapter.out.persistence.MemberMoneyJpaEntity;
 import com.fastcampuspay.money.adapter.out.persistence.MoneyChangingRequestMapper;
 import com.fastcampuspay.money.application.port.in.*;
@@ -153,48 +154,71 @@ public class IncreaseMoneyRequestService implements IncreaseMoneyRequestUseCase,
         return null;
     }
 
+
+
     @Override
     public void createMemberMoney(CreateMemberMoneyCommand command) {
         MemberMoneyCreatedCommand axonCommand = new MemberMoneyCreatedCommand(command.getMembershipId());
         commandGateway.send(axonCommand).whenComplete((result, throwable) -> {
             if (throwable != null) {
-                // 로깅
+                System.out.println("throwable = " + throwable);
                 throw new RuntimeException(throwable);
-            } else {
+            } else{
                 System.out.println("result = " + result);
-                createMemberMoneyPort.crateMemberMoney(
+                createMemberMoneyPort.createMemberMoney(
                         new MemberMoney.MembershipId(command.getMembershipId()),
                         new MemberMoney.MoneyAggregateIdentifier(result.toString())
                 );
             }
         });
-
-
     }
 
     @Override
     public void increaseMoneyRequestByEvent(IncreaseMoneyRequestCommand command) {
         MemberMoneyJpaEntity memberMoneyJpaEntity = getMemberMoneyPort.getMemberMoney(
-                new MemberMoney.MembershipId((command.getTargetMembershipId()))
+                new MemberMoney.MembershipId(command.getTargetMembershipId())
         );
 
-        String aggregateIdentifier = memberMoneyJpaEntity.getAggregateIdentifier();
+        String memberMoneyAggregateIdentifier = memberMoneyJpaEntity.getAggregateIdentifier();
 
-        // command
-        commandGateway.send(IncreaseMemberMoneyCommand.builder()
-                        .aggregateIndentifier(aggregateIdentifier)
-                        .membershipId(command.getTargetMembershipId())
-                        .amount(command.getAmount())
-                        .build())
-            .whenComplete(
-                    (result, throwable) -> {
-                        if (throwable != null) {
-                            System.out.println("throwable = " + throwable);
-                            throw new RuntimeException(throwable);
-                        } else {
-                            System.out.println("result = " + result);
-                        }
-                    }
-            );
+        // saga의 시작을 나타내는 커맨드!
+        // RechargingMoneyRequestCreateCommand
+        commandGateway.send(new RechargingMoneyRequestCreateCommand(memberMoneyAggregateIdentifier
+                , UUID.randomUUID().toString()
+                , command.getTargetMembershipId()
+                , command.getAmount())
+        )
+        .whenComplete((result, throwable) -> {
+            if (throwable != null) {
+                throwable.printStackTrace();
+                throw new RuntimeException(throwable);
+            } else {
+                System.out.println("result = " + result);
+            }
+        });
+//        MemberMoneyJpaEntity memberMoneyJpaEntity = getMemberMoneyPort.getMemberMoney(
+//                new MemberMoney.MembershipId(command.getTargetMembershipId())
+//        );
+//
+//        String aggregateIdentifier = memberMoneyJpaEntity.getAggregateIdentifier();
+//        // command
+//        commandGateway.send(IncreaseMemberMoneyCommand.builder()
+//                        .aggregateIdentifier(aggregateIdentifier)
+//                        .membershipId(command.getTargetMembershipId())
+//                        .amount(command.getAmount()).build())
+//        .whenComplete(
+//                (result, throwable) -> {
+//                    if (throwable != null) {
+//                        throwable.printStackTrace();
+//                        throw new RuntimeException(throwable);
+//                    } else {
+//                        // Increase money -> money incr
+//                        System.out.println("increaseMoney result = " + result);
+//                        increaseMoneyPort.increaseMoney(
+//                                new MemberMoney.MembershipId(command.getTargetMembershipId())
+//                                , command.getAmount());
+//                    }
+//                }
+//        );
     }
 }

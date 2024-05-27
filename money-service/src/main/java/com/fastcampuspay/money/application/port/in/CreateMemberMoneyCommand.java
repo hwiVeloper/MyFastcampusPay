@@ -9,8 +9,9 @@ import javax.validation.constraints.NotNull;
 
 @Builder
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public class CreateMemberMoneyCommand extends SelfValidating<CreateMemberMoneyCommand> {
+
     @NotNull
     private final String membershipId;
 

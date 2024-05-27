@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class FirmbankingRequestCreatedEvent {
+
     private String fromBankName;
     private String fromBankAccountNumber;
 

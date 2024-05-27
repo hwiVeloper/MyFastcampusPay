@@ -1,11 +1,23 @@
 version: '3'
 services:
+  axon-server:
+    container_name: axon-server
+    image: axoniq/axonserver:4.6.3-jdk-11-dev
+    networks:
+      - fastcampuspay_network
+    ports:
+      - "8024:8024"
+      - "8124:8124"
+    volumes:
+      - axonserver-data:/axonserver/data
+      - axonserver-events:/axonserver/events
+      - axonserver-config:/axonserver/config:ro
   mysql:
     image: mysql:8.0
     networks:
       - fastcampuspay_network
     volumes:
-      - ./db/conf.d:/etc/mysql/conf.d # 프로젝트 파일과 볼륨 안의 파일 동기화 처리.
+      - ./db/conf.d:/etc/mysql/conf.d
       - ./db/data:/var/lib/mysql
       - ./db/initdb.d:/docker-entrypoint-initdb.d
     env_file: .env
@@ -18,68 +30,39 @@ services:
       - MYSQL_PASSWORD=mysqlpw
 
   membership-service:
-    image: fastcampus-pay-membership-service:1.0.3
+    image: fastcampus-pay-membership-service:1.0.0
     networks:
       - fastcampuspay_network
     ports:
-      - "8081:8080" # 포트포워딩
+      - "8081:8080"
     depends_on:
       - mysql
     environment:
+      - AXON_AXONSERVER_SERVERS=axon-server:8124
+      - AXON_SERIALIZER_EVENTS=jackson
+      - AXON_SERIALIZER_MESSAGES=jackson
+      - AXON_SERIALIZER_GENERAL=xstream
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/fastcampus_pay?useSSL=false&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=mysqluser
       - SPRING_DATASOURCE_PASSWORD=mysqlpw
       - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL5InnoDBDialect
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
       - KAFKA_CLUSTERS_BOOTSTRAPSERVERS=kafka:29092
       - LOGGING_TOPIC=fastcampus.logging.out.stdout
+
   banking-service:
     image: fastcampus-pay-banking-service:1.0.0
     networks:
       - fastcampuspay_network
     ports:
-      - "8082:8080" # 포트포워딩
+      - "8082:8080"
     depends_on:
       - mysql
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/fastcampus_pay?useSSL=false&allowPublicKeyRetrieval=true
-      - SPRING_DATASOURCE_USERNAME=mysqluser
-      - SPRING_DATASOURCE_PASSWORD=mysqlpw
-      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL5InnoDBDialect
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-      - KAFKA_CLUSTERS_BOOTSTRAPSERVERS=kafka:29092
-      - LOGGING_TOPIC=fastcampus.logging.out.stdout
-      - SERVICE_MEMBERSHIP_URL=http://membership-service:8080
-  money-service:
-    image: fastcampus-pay-money-service:1.0.0
-    networks:
-      - fastcampuspay_network
-    ports:
-      - "8083:8080" # 포트포워딩
-    depends_on:
-      - mysql
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/fastcampus_pay?useSSL=false&allowPublicKeyRetrieval=true
-      - SPRING_DATASOURCE_USERNAME=mysqluser
-      - SPRING_DATASOURCE_PASSWORD=mysqlpw
-      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL5InnoDBDialect
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-      - KAFKA_CLUSTERS_BOOTSTRAPSERVERS=kafka:29092
-      - LOGGING_TOPIC=fastcampus.logging.out.stdout
-      - TASK_TOPIC=fastcampuspay.task.topic
-      - TASK_RESULT_TOPIC=fastcampuspay.task.result.topic
-      - SERVICE_MEMBERSHIP_URL=http://membership-service:8080
-  remittance-service:
-    image: fastcampus-pay-remittance-service:1.0.0
-    networks:
-      - fastcampuspay_network
-    ports:
-      - "8084:8080"
-    restart: always
-    depends_on:
-      - kafka
-      - mysql
-    environment:
+      - AXON_AXONSERVER_SERVERS=axon-server:8124
+      - AXON_SERIALIZER_EVENTS=jackson
+      - AXON_SERIALIZER_MESSAGES=jackson
+      - AXON_SERIALIZER_GENERAL=xstream
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/fastcampus_pay?useSSL=false&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=mysqluser
       - SPRING_DATASOURCE_PASSWORD=mysqlpw
@@ -89,7 +72,31 @@ services:
       - LOGGING_TOPIC=fastcampus.logging.out.stdout
       - SERVICE_MEMBERSHIP_URL=http://membership-service:8080
       - SERVICE_BANKING_URL=http://banking-service:8080
-      - SERVICE_MONEY_URL=http://money-service:8080
+
+  money-service:
+    image: fastcampus-pay-money-service:1.0.0
+    networks:
+      - fastcampuspay_network
+    ports:
+      - "8083:8080"
+    depends_on:
+      - mysql
+    environment:
+      - AXON_AXONSERVER_SERVERS=axon-server:8124
+      - AXON_SERIALIZER_EVENTS=jackson
+      - AXON_SERIALIZER_MESSAGES=jackson
+      - AXON_SERIALIZER_GENERAL=xstream
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/fastcampus_pay?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=mysqluser
+      - SPRING_DATASOURCE_PASSWORD=mysqlpw
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL5InnoDBDialect
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
+      - KAFKA_CLUSTERS_BOOTSTRAPSERVERS=kafka:29092
+      - LOGGING_TOPIC=fastcampus.logging.out.stdout
+      - TASK_TOPIC=fastcampus.task.topic
+      - TASK_RESULT_TOPIC=fastcampus.task.result.topic
+      - SERVICE_MEMBERSHIP_URL=http://membership-service:8080
+      - SERVICE_BANKING_URL=http://banking-service:8080
   zookeeper:
     image: 'arm64v8/zookeeper:3.8'
     networks:
@@ -108,7 +115,6 @@ services:
     ports:
       - '9092:9092'
     environment:
-      - BITNAMI_DEBUG=yes
       - KAFKA_BROKER_ID=1
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
       - ALLOW_PLAINTEXT_LISTENER=yes
@@ -116,7 +122,6 @@ services:
       - KAFKA_CFG_ADVERTISED_LISTENERS=LC://kafka:29092,LX://${DOCKER_HOST_IP:-localhost}:9092
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=LC:PLAINTEXT,LX:PLAINTEXT
       - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=LC
-      - KAFKA_ENABLE_KRAFT=no
     depends_on:
       - zookeeper
 
@@ -159,8 +164,54 @@ services:
     environment:
       - KAFKA_CLUSTERS_BOOTSTRAPSERVERS=kafka:29092
       - LOGGING_TOPIC=fastcampus.logging.out.stdout
-      - TASK_TOPIC=fastcampuspay.task.topic
-      - TASK_RESULT_TOPIC=fastcampuspay.task.result.topic
+      - TASK_TOPIC=fastcampus.task.topic
+      - TASK_RESULT_TOPIC=fastcampus.task.result.topic
+
+  remittance-service:
+    image: fastcampus-pay-remittance-service:1.0.0
+    networks:
+      - fastcampuspay_network
+    ports:
+      - "8084:8080"
+    restart: always
+    depends_on:
+      - kafka
+      - mysql
+    environment:
+      - AXON_AXONSERVER_SERVERS=axon-server:8124
+      - AXON_SERIALIZER_EVENTS=jackson
+      - AXON_SERIALIZER_MESSAGES=jackson
+      - AXON_SERIALIZER_GENERAL=xstream
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/fastcampus_pay?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=mysqluser
+      - SPRING_DATASOURCE_PASSWORD=mysqlpw
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL5InnoDBDialect
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
+      - KAFKA_CLUSTERS_BOOTSTRAPSERVERS=kafka:29092
+      - LOGGING_TOPIC=fastcampus.logging.out.stdout
+      - SERVICE_MEMBERSHIP_URL=http://membership-service:8080
+      - SERVICE_BANKING_URL=http://banking-service:8080
+      - SERVICE_MONEY_URL=http://money-service:8080
+
+volumes:
+  axonserver-data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ${PWD}/axon-server-se/data
+  axonserver-events:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ${PWD}/axon-server-se/events
+  axonserver-config:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ${PWD}/axon-server-se/config
 
 networks:
   fastcampuspay_network:

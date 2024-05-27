@@ -12,7 +12,7 @@ public interface RequestFirmbankingPort {
             FirmbankingRequest.ToBankAccountNumber toBankAccountNumber,
             FirmbankingRequest.MoneyAmount moneyAmount,
             FirmbankingRequest.FirmbankingStatus firmbankingStatus,
-            FirmbankingRequest.AggregateIdentifier aggregateIdentifier
+            FirmbankingRequest.FirmbankingAggregateIdentifier firmbankingAggregateIdentifier
     );
 
     FirmbankingRequestJpaEntity modifyFirmbankingRequest(
@@ -20,6 +20,6 @@ public interface RequestFirmbankingPort {
     );
 
     FirmbankingRequestJpaEntity getFirmbankingRequest(
-            FirmbankingRequest.AggregateIdentifier firmbankingaggregateIdentifier
+            FirmbankingRequest.FirmbankingAggregateIdentifier firmbankingAggregateIdentifier
     );
 }

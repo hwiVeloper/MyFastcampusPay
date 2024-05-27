@@ -4,7 +4,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Value;
-import org.axonframework.modelling.command.AggregateIdentifier;
 
 import java.util.UUID;
 
@@ -27,7 +26,6 @@ public class FirmbankingRequest {
     @Getter private final UUID uuid;
 
     @Getter private final String aggregateIdentifier;
-
     public static FirmbankingRequest generateFirmbankingRequest (
             FirmbankingRequestId firmbankingRequestId,
             FromBankName fromBankName,
@@ -37,7 +35,7 @@ public class FirmbankingRequest {
             MoneyAmount moneyAmount,
             FirmbankingStatus firmbankingStatus,
             UUID uuid,
-            AggregateIdentifier aggregateIdentifier
+            FirmbankingAggregateIdentifier firmbankingAggregateIdentifier
     ){
         return new FirmbankingRequest(
                 firmbankingRequestId.getFirmbankingRequestId(),
@@ -48,7 +46,7 @@ public class FirmbankingRequest {
                 moneyAmount.getMoneyAmount(),
                 firmbankingStatus.firmBankingStatus,
                 uuid,
-                aggregateIdentifier.getAggregateIdentifier()
+                firmbankingAggregateIdentifier.getAggregateIdentifier()
         );
     }
 
@@ -109,8 +107,8 @@ public class FirmbankingRequest {
     }
 
     @Value
-    public static class AggregateIdentifier {
-        public AggregateIdentifier(String value) {
+    public static class FirmbankingAggregateIdentifier {
+        public FirmbankingAggregateIdentifier(String value) {
             this.aggregateIdentifier = value;
         }
         String aggregateIdentifier;

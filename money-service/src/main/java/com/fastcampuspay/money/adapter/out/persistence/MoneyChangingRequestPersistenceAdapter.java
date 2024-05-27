@@ -45,8 +45,7 @@ public class MoneyChangingRequestPersistenceAdapter implements IncreaseMoneyPort
         } catch (Exception e){
             entity = new MemberMoneyJpaEntity(
                     Long.parseLong(memberId.getMembershipId()),
-                    increaseMoneyAmount,
-                    ""
+                    increaseMoneyAmount, ""
             );
             entity = memberMoneyRepository.save(entity);
             return entity;
@@ -58,31 +57,26 @@ public class MoneyChangingRequestPersistenceAdapter implements IncreaseMoneyPort
     }
 
     @Override
-    public void crateMemberMoney(MemberMoney.MembershipId memberId, MemberMoney.MoneyAggregateIdentifier aggregateIdentifier) {
+    public void createMemberMoney(MemberMoney.MembershipId memberId, MemberMoney.MoneyAggregateIdentifier aggregateIdentifier) {
         MemberMoneyJpaEntity entity = new MemberMoneyJpaEntity(
                 Long.parseLong(memberId.getMembershipId()),
-                0,
-                aggregateIdentifier.getMoneyAggregateIdentifier()
+                0, aggregateIdentifier.getAggregateIdentifier()
         );
-
         memberMoneyRepository.save(entity);
     }
 
     @Override
     public MemberMoneyJpaEntity getMemberMoney(MemberMoney.MembershipId memberId) {
         MemberMoneyJpaEntity entity;
-
-        List<MemberMoneyJpaEntity> entityList = memberMoneyRepository.findByMembershipId(Long.parseLong(memberId.getMembershipId()));
-        if (entityList.size() == 0) {
+        List<MemberMoneyJpaEntity> entityList =  memberMoneyRepository.findByMembershipId(Long.parseLong(memberId.getMembershipId()));
+        if(entityList.size() == 0){
             entity = new MemberMoneyJpaEntity(
                     Long.parseLong(memberId.getMembershipId()),
-                    0,
-                    ""
+                    0, ""
             );
             entity = memberMoneyRepository.save(entity);
             return entity;
         }
-
-        return entityList.get(0);
+        return  entityList.get(0);
     }
 }

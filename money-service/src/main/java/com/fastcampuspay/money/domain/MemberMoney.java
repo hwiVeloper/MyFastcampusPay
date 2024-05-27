@@ -14,21 +14,17 @@ public class MemberMoney {
     // 잔액
     @Getter private final int balance;
 
-    @Getter private final String moneyAggregateIdentifier;
-
     // @Getter private final int linkedBankAccount;
 
     public static MemberMoney generateMemberMoney (
             MemberMoneyId memberMoneyId,
             MembershipId membershipId,
-            MoneyBalance moneyBalance,
-            MoneyAggregateIdentifier moneyAggregateIdentifier
+            MoneyBalance moneyBalance
     ){
         return new MemberMoney(
                 memberMoneyId.memberMoneyId,
                 membershipId.membershipId,
-                moneyBalance.balance,
-                moneyAggregateIdentifier.moneyAggregateIdentifier
+                moneyBalance.balance
         );
     }
 
@@ -58,9 +54,9 @@ public class MemberMoney {
 
     @Value
     public static class MoneyAggregateIdentifier {
-        public MoneyAggregateIdentifier(String value) {
-            this.moneyAggregateIdentifier = value;
+        public MoneyAggregateIdentifier(String aggregateIdentifier) {
+            this.aggregateIdentifier = aggregateIdentifier;
         }
-        String moneyAggregateIdentifier ;
+        String aggregateIdentifier ;
     }
 }

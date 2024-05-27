@@ -25,11 +25,14 @@ public class RegisterBankAccountCommand extends SelfValidating<RegisterBankAccou
 
     private final boolean isValid;
 
-    public RegisterBankAccountCommand(String membershipId, String bankName, String bankAccountNumber, boolean isValid) {
+    private final String aggregateIdentifier;
+
+    public RegisterBankAccountCommand(String membershipId, String bankName, String bankAccountNumber, boolean isValid, String aggregateIdentifier) {
         this.membershipId = membershipId;
         this.bankName = bankName;
         this.bankAccountNumber = bankAccountNumber;
         this.isValid = isValid;
+        this.aggregateIdentifier = aggregateIdentifier;
 
         this.validateSelf();
     }

@@ -10,4 +10,6 @@ import lombok.NoArgsConstructor;
 public class UpdateFirmbankingRequest {
     private String firmbankingRequestAggregateIdentifier;
     private int status;
+
+    // TODO: Add a field for the reason of the status change.
 }

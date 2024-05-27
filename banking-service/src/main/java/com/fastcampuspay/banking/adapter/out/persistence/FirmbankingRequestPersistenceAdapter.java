@@ -14,9 +14,8 @@ public class FirmbankingRequestPersistenceAdapter implements RequestFirmbankingP
 
     private final SpringDataFirmbankingRequestRepository firmbankingRequestRepository;
 
-
     @Override
-    public FirmbankingRequestJpaEntity createFirmbankingRequest(FirmbankingRequest.FromBankName fromBankName, FirmbankingRequest.FromBankAccountNumber fromBankAccountNumber, FirmbankingRequest.ToBankName toBankName, FirmbankingRequest.ToBankAccountNumber toBankAccountNumber, FirmbankingRequest.MoneyAmount moneyAmount, FirmbankingRequest.FirmbankingStatus firmbankingStatus, FirmbankingRequest.AggregateIdentifier aggregateIdentifier) {
+    public FirmbankingRequestJpaEntity createFirmbankingRequest(FirmbankingRequest.FromBankName fromBankName, FirmbankingRequest.FromBankAccountNumber fromBankAccountNumber, FirmbankingRequest.ToBankName toBankName, FirmbankingRequest.ToBankAccountNumber toBankAccountNumber, FirmbankingRequest.MoneyAmount moneyAmount, FirmbankingRequest.FirmbankingStatus firmbankingStatus, FirmbankingRequest.FirmbankingAggregateIdentifier aggregateIdentifier) {
         return firmbankingRequestRepository.save(new FirmbankingRequestJpaEntity(
                         fromBankName.getFromBankName(),
                         fromBankAccountNumber.getFromBankAccountNumber(),
@@ -35,10 +34,10 @@ public class FirmbankingRequestPersistenceAdapter implements RequestFirmbankingP
     }
 
     @Override
-    public FirmbankingRequestJpaEntity getFirmbankingRequest(FirmbankingRequest.AggregateIdentifier firmbankingaggregateIdentifier) {
-        List<FirmbankingRequestJpaEntity> list = firmbankingRequestRepository.findByAggregateIdentifier(firmbankingaggregateIdentifier.getAggregateIdentifier());
-        if (list.size() >= 1) {
-            return list.get(0);
+    public FirmbankingRequestJpaEntity getFirmbankingRequest(FirmbankingRequest.FirmbankingAggregateIdentifier firmbankingAggregateIdentifier) {
+        List<FirmbankingRequestJpaEntity> entityList = firmbankingRequestRepository.findByAggregateIdentifier(firmbankingAggregateIdentifier.getAggregateIdentifier());
+        if (entityList.size() >= 1) {
+            return entityList.get(0);
         }
         return null;
     }

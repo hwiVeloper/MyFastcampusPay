@@ -1,6 +1,5 @@
 package com.fastcampuspay.banking.adapter.in.web;
 
-import com.fastcampuspay.banking.adapter.axon.command.CreateFirmbankingRequestCommand;
 import com.fastcampuspay.banking.application.port.in.RequestFirmbankingCommand;
 import com.fastcampuspay.banking.application.port.in.RequestFirmbankingUseCase;
 import com.fastcampuspay.banking.application.port.in.UpdateFirmbankingCommand;
@@ -19,9 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class RequestFirmbankingController {
     private final RequestFirmbankingUseCase requestFirmbankingUseCase;
-
     private final UpdateFirmbankingUseCase updateFirmbankingUseCase;
-
     @PostMapping(path = "/banking/firmbanking/request")
     FirmbankingRequest requestFirmbanking(@RequestBody RequestFirmbankingRequest request) {
         RequestFirmbankingCommand command = RequestFirmbankingCommand.builder()
@@ -36,7 +33,7 @@ public class RequestFirmbankingController {
     }
 
     @PostMapping(path = "/banking/firmbanking/request-eda")
-    FirmbankingRequest requestFirmbankingByEvent(@RequestBody RequestFirmbankingRequest request) {
+    void requestFirmbankingByEvent(@RequestBody RequestFirmbankingRequest request) {
         RequestFirmbankingCommand command = RequestFirmbankingCommand.builder()
                 .toBankName(request.getToBankName())
                 .toBankAccountNumber(request.getToBankAccountNumber())
@@ -45,15 +42,15 @@ public class RequestFirmbankingController {
                 .moneyAmount(request.getMoneyAmount())
                 .build();
 
-        return requestFirmbankingUseCase.requestFirmbankingByEvent(command);
+        requestFirmbankingUseCase.requestFirmbankingByEvent(command);
     }
 
     @PutMapping(path = "/banking/firmbanking/update-eda")
     void updateFirmbankingByEvent(@RequestBody UpdateFirmbankingRequest request) {
         UpdateFirmbankingCommand command = UpdateFirmbankingCommand.builder()
                 .firmbankingAggregateIdentifier(request.getFirmbankingRequestAggregateIdentifier())
-                .firmbankingStatus(request.getStatus())
-                .build();
+                        .firmbankingStatus(request.getStatus())
+                                .build();
 
         updateFirmbankingUseCase.updateFirmbankingByEvent(command);
     }
