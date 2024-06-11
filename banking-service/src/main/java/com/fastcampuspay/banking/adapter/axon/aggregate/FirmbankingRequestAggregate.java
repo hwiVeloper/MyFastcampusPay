@@ -9,10 +9,8 @@ import com.fastcampuspay.banking.adapter.out.external.bank.FirmbankingResult;
 import com.fastcampuspay.banking.application.port.out.RequestExternalFirmbankingPort;
 import com.fastcampuspay.banking.application.port.out.RequestFirmbankingPort;
 import com.fastcampuspay.banking.domain.FirmbankingRequest;
-import com.fastcampuspay.common.event.RequestFirmbankingCommand;
 import com.fastcampuspay.common.event.RequestFirmbankingFinishedEvent;
 import com.fastcampuspay.common.event.RollbackFirmbankingFinishedEvent;
-import com.fastcampuspay.common.event.RollbackFirmbankingRequestCommand;
 import lombok.Data;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
@@ -45,7 +43,7 @@ public class FirmbankingRequestAggregate {
     }
 
     @CommandHandler
-    public FirmbankingRequestAggregate(RequestFirmbankingCommand command, RequestFirmbankingPort firmbankingPort, RequestExternalFirmbankingPort externalFirmbankingPort){
+    public FirmbankingRequestAggregate(com.fastcampuspay.common.command.RequestFirmbankingCommand command, RequestFirmbankingPort firmbankingPort, RequestExternalFirmbankingPort externalFirmbankingPort){
         System.out.println("FirmbankingRequestAggregate Handler");
         id = command.getAggregateIdentifier();
 
@@ -63,12 +61,12 @@ public class FirmbankingRequestAggregate {
         // firmbanking!
         FirmbankingResult firmbankingResult = externalFirmbankingPort.requestExternalFirmbanking(
                 new ExternalFirmbankingRequest(
-                        command.getFromBankName(),
-                        command.getFromBankAccountNumber(),
-                        command.getToBankName(),
-                        command.getToBankAccountNumber(),
-                        command.getMoneyAmount()
-                ));
+                    command.getFromBankName(),
+                    command.getFromBankAccountNumber(),
+                    command.getToBankName(),
+                    command.getToBankAccountNumber(),
+                    command.getMoneyAmount()
+        ));
 
         int resultCode = firmbankingResult.getResultCode();
 
@@ -86,7 +84,7 @@ public class FirmbankingRequestAggregate {
     }
 
     @CommandHandler
-    public FirmbankingRequestAggregate(@NotNull RollbackFirmbankingRequestCommand command, RequestFirmbankingPort firmbankingPort, RequestExternalFirmbankingPort externalFirmbankingPort) {
+    public FirmbankingRequestAggregate(@NotNull com.fastcampuspay.common.command.RollbackFirmbankingRequestCommand command, RequestFirmbankingPort firmbankingPort, RequestExternalFirmbankingPort externalFirmbankingPort) {
         System.out.println("RollbackFirmbankingRequestCommand Handler");
         id = UUID.randomUUID().toString();
 

@@ -13,7 +13,6 @@ import javax.validation.constraints.NotNull;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class ModifyMembershipCommand extends SelfValidating<ModifyMembershipCommand> {
-
     @NotNull
     private final String membershipId;
 

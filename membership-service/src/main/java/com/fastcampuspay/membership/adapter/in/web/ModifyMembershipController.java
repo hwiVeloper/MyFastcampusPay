@@ -4,6 +4,7 @@ import com.fastcampuspay.common.WebAdapter;
 import com.fastcampuspay.membership.application.port.in.ModifyMembershipCommand;
 import com.fastcampuspay.membership.application.port.in.ModifyMembershipUseCase;
 import com.fastcampuspay.membership.domain.Membership;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,10 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class ModifyMembershipController {
-    private final ModifyMembershipUseCase useCase;
-
+    private final ModifyMembershipUseCase modifyMembershipUseCase;
     @PostMapping(path = "/membership/modify")
-    ResponseEntity<Membership> findMembershipByMemberId(@RequestBody ModifyMembershipRequest request) {
+    ResponseEntity<Membership> modifyMembershipByMemberId(@RequestBody ModifyMembershipRequest request) {
+
         ModifyMembershipCommand command = ModifyMembershipCommand.builder()
                 .membershipId(request.getMembershipId())
                 .name(request.getName())
@@ -26,7 +27,6 @@ public class ModifyMembershipController {
                 .isValid(request.isValid())
                 .isCorp(request.isCorp())
                 .build();
-
-        return ResponseEntity.ok(useCase.modifyMembership(command));
+        return ResponseEntity.ok(modifyMembershipUseCase.modifyMembership(command));
     }
 }

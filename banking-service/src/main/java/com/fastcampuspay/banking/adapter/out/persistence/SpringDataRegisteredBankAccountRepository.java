@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface SpringDataRegisteredBankAccountRepository extends JpaRepository<RegisteredBankAccountJpaEntity, Long> {
-    @Query("SELECT e FROM RegisteredBankAccountJpaEntity e WHERE e.membershipId = :membershipId")
+
+    @Query("SELECT e  FROM RegisteredBankAccountJpaEntity e WHERE e.membershipId = :membershipId")
     List<RegisteredBankAccountJpaEntity> findByMembershipId(@Param("membershipId") String membershipId);
 }

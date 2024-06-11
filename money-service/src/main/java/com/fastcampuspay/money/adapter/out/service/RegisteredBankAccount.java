@@ -9,8 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RegisteredBankAccount {
     private String registeredBankAccountId;
+
     private String membershipId;
+
     private String bankName;
+
     private String bankAccountNumber;
     private boolean linkedStatusIsValid;
     private String aggregateIdentifier;

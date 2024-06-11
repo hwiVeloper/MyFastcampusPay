@@ -11,27 +11,26 @@ import lombok.RequiredArgsConstructor;
 
 import javax.transaction.Transactional;
 
+@UseCase
 @RequiredArgsConstructor
 @Transactional
-@UseCase
 public class ModifyMembershipService implements ModifyMembershipUseCase {
 
-    private final ModifyMembershipPort port;
-
-    private final MembershipMapper mapper;
+    private final ModifyMembershipPort modifyMembershipPort;
+    private final MembershipMapper membershipMapper;
 
     @Override
     public Membership modifyMembership(ModifyMembershipCommand command) {
-        MembershipJpaEntity jpaEntity = port.modifyMembership(
-                new Membership.MembershipId(command.getMembershipId())
-                , new Membership.MembershipName(command.getName())
-                , new Membership.MembershipEmail(command.getEmail())
-                , new Membership.MembershipAddress(command.getAddress())
-                , new Membership.MembershipIsValid(command.isValid())
-                , new Membership.MembershipIsCorp(command.isCorp())
+        MembershipJpaEntity jpaEntity = modifyMembershipPort.modifyMembership(
+                new Membership.MembershipId(command.getMembershipId()),
+                new Membership.MembershipName(command.getName()),
+                new Membership.MembershipEmail(command.getEmail()),
+                new Membership.MembershipAddress(command.getAddress()),
+                new Membership.MembershipIsValid(command.isValid()),
+                new Membership.MembershipIsCorp(command.isCorp())
         );
 
-        // entity -> mapper
-        return mapper.mapToDomainEntity(jpaEntity);
+        // entity -> Membership
+        return membershipMapper.mapToDomainEntity(jpaEntity);
     }
 }

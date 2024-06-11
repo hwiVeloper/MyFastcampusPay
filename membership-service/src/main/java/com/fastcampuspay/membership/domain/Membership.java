@@ -14,19 +14,25 @@ public class Membership {
     @Getter private final boolean isValid;
     @Getter private final boolean isCorp;
 
-    /**
-     * final을 붙이는 이유
-     * member 정의, getter, setter
-     * 오염되면 안되는 클래스, 고객정보..!
-     */
+    // Membership
+    // 오염이 되면 안되는 클래스. 고객 정보. 핵심 도메인
 
-    public static Membership generateMember(MembershipId membershipId
-    , MembershipName membershipName
-    , MembershipEmail membershipEmail
-    , MembershipAddress membershipAddress
-    , MembershipIsValid membershipIsValid
-    , MembershipIsCorp membershipIsCorp) {
-        return new Membership(membershipId.membershipId, membershipName.membershipName, membershipEmail.membershipEmail, membershipAddress.membershipAddress, membershipIsValid.membershipIsValid, membershipIsCorp.membershipIsCorp);
+    public static Membership generateMember (
+            MembershipId membershipId
+            , MembershipName membershipName
+            , MembershipEmail membershipEmail
+            , MembershipAddress membershipAddress
+            , MembershipIsValid membershipIsValid
+            , MembershipIsCorp membershipIsCorp
+    ){
+        return new Membership(
+                membershipId.membershipId,
+                membershipName.nameValue,
+                membershipEmail.emailValue,
+                membershipAddress.addressValue,
+                membershipIsValid.isValidValue,
+                membershipIsCorp.isCorpValue
+        );
     }
 
     @Value
@@ -34,52 +40,45 @@ public class Membership {
         public MembershipId(String value) {
             this.membershipId = value;
         }
-
-        String membershipId;
+        String membershipId ;
     }
 
     @Value
     public static class MembershipName {
         public MembershipName(String value) {
-            this.membershipName = value;
+            this.nameValue = value;
         }
-
-        String membershipName;
+        String nameValue ;
     }
-
     @Value
     public static class MembershipEmail {
         public MembershipEmail(String value) {
-            this.membershipEmail = value;
+            this.emailValue = value;
         }
-
-        String membershipEmail;
+        String emailValue;
     }
 
     @Value
     public static class MembershipAddress {
         public MembershipAddress(String value) {
-            this.membershipAddress = value;
+            this.addressValue = value;
         }
-
-        String membershipAddress;
+        String addressValue;
     }
 
     @Value
     public static class MembershipIsValid {
         public MembershipIsValid(boolean value) {
-            this.membershipIsValid = value;
+            this.isValidValue = value;
         }
-
-        boolean membershipIsValid;
+        boolean isValidValue;
     }
 
     @Value
     public static class MembershipIsCorp {
         public MembershipIsCorp(boolean value) {
-            this.membershipIsCorp = value;
+            this.isCorpValue = value;
         }
-
-        boolean membershipIsCorp;
+        boolean isCorpValue;
     }
 }

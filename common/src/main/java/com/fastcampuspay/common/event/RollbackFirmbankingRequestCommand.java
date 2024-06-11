@@ -1,4 +1,4 @@
-package com.fastcampuspay.common.event;
+package com.fastcampuspay.common.command;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

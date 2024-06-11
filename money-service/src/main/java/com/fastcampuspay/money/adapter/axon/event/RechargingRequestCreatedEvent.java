@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RechargingRequestCreatedEvent {
-    // 충전 동작을 요청이 이벤트가 생성되었다는 이벤트
+    // "충전" 동작을 요청이 생성되었다는 "이벤트"
 
     private String rechargingRequestId;
 
@@ -19,6 +19,5 @@ public class RechargingRequestCreatedEvent {
     private String registeredBankAccountAggregateIdentifier;
 
     private String bankName;
-
     private String bankAccountNumber;
 }

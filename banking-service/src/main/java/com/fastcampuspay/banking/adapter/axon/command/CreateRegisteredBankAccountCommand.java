@@ -12,5 +12,4 @@ public class CreateRegisteredBankAccountCommand {
     private String membershipId;
     private String bankName;
     private String bankAccountNumber;
-
 }

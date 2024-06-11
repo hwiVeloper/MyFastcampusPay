@@ -1,5 +1,0 @@
-#kafka:
-#  clusters:
-#    bootstrapservers: 123
-#logging:
-#  topic: 123

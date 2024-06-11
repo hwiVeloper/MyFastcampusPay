@@ -2,8 +2,8 @@ plugins {
     id 'java'
 }
 
-ext {
-    axonVersion = "4.6.0"
+ext{
+    axonVersion = "4.8.0"
 }
 
 group 'com.fastcampuspay.common'
@@ -17,8 +17,8 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-    implementation group: 'org.axonframework', name: 'axon-spring-boot-starter', version: "$axonVersion"
     implementation group: 'org.axonframework', name: 'axon-configuration', version: "$axonVersion"
+    implementation group: 'org.axonframework', name: 'axon-spring-boot-starter', version: "$axonVersion"
 }
 
 test {

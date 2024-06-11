@@ -20,7 +20,6 @@ import static org.axonframework.modelling.command.AggregateLifecycle.apply;
 
 @Aggregate()
 public class RegisteredBankAccountAggregate {
-
     @AggregateIdentifier
     private String id;
 
@@ -30,10 +29,9 @@ public class RegisteredBankAccountAggregate {
 
     private String bankAccountNumber;
 
-    // 생성자 CommandHandler
     @CommandHandler
     public RegisteredBankAccountAggregate(CreateRegisteredBankAccountCommand command) {
-        System.out.println("CreateRegisteredBankAccountCommand Command Handler");
+        System.out.println("CreateRegisteredBankAccountCommand Sourcing Handler");
         apply(new CreateRegisteredBankAccountEvent(command.getMembershipId(), command.getBankName(), command.getBankAccountNumber()));
     }
 
@@ -41,30 +39,32 @@ public class RegisteredBankAccountAggregate {
     public void handle(@NotNull CheckRegisteredBankAccountCommand command, RequestBankAccountInfoPort bankAccountInfoPort) {
         System.out.println("CheckRegisteredBankAccountCommand Handler");
 
-        // command를 통해 해당 어그리거트(RegisteredBankAccount)가 정상인지를 확인해야한다.
+        // command 를 통해, 이 어그리거트(RegisteredBankAccount) 가 정상인지를 확인해야해요.
         id = command.getAggregateIdentifier();
 
-        // registered bank account check
+        // Check! Registerd Bank Account
         BankAccount account = bankAccountInfoPort.getBankAccountInfo(new GetBankAccountRequest(command.getBankName(), command.getBankAccountNumber()));
         boolean isValidAccount = account.isValid();
 
         String firmbankingUUID = UUID.randomUUID().toString();
 
-        // CheckRegisteredBankAccountEvent
+        // CheckedRegisteredBankAccountEvent
         apply(new CheckedRegisteredBankAccountEvent(
-                command.getRechargeRequestId()
-                , command.getCheckRegisteredBankAccountId()
-                , command.getMembershipId()
-                , isValidAccount
-                , command.getAmount()
-                , firmbankingUUID
-                , account.getBankName()
-                , account.getBankAccountNumber()
-        ));
+                        command.getRechargeRequestId()
+                        , command.getCheckRegisteredBankAccountId()
+                        , command.getMembershipId()
+                        , isValidAccount
+                        , command.getAmount()
+                        , firmbankingUUID
+                        , account.getBankName()
+                        , account.getBankAccountNumber()
+                )
+        );
+
     }
 
     @EventSourcingHandler
-    public void on(CreateRegisteredBankAccountEvent event) {
+    public void on (CreateRegisteredBankAccountEvent event) {
         System.out.println("CreateRegisteredBankAccountEvent Sourcing Handler");
         id = UUID.randomUUID().toString();
         membershipId = event.getMembershipId();

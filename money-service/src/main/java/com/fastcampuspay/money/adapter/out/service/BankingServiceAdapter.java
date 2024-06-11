@@ -36,7 +36,7 @@ public class BankingServiceAdapter implements GetRegisteredBankAccountPort {
                     , registeredBankAccount.getBankName()
                     , registeredBankAccount.getBankName()
                     , registeredBankAccount.getBankAccountNumber()
-                    );
+            );
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

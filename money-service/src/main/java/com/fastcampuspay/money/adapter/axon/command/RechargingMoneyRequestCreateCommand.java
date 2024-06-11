@@ -9,13 +9,11 @@ import org.axonframework.modelling.command.TargetAggregateIdentifier;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RechargingMoneyRequestCreateCommand {
-
     @TargetAggregateIdentifier
     private String aggregateIdentifier;
 
     private String rechargingRequestId;
 
     private String membershipId;
-
     private int amount;
 }

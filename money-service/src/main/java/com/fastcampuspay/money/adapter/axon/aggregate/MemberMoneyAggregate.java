@@ -47,20 +47,22 @@ public class MemberMoneyAggregate {
     }
 
     @CommandHandler
-    public void handler(RechargingMoneyRequestCreateCommand command, GetRegisteredBankAccountPort getRegisteredBankAccountPort) {
+    public void handler(RechargingMoneyRequestCreateCommand command, GetRegisteredBankAccountPort getRegisteredBankAccountPort){
         System.out.println("RechargingMoneyRequestCreateCommand Handler");
         id = command.getAggregateIdentifier();
 
-        // Saga Start
-        // new RechagingRequestCreatedEvent
-        // banking 정보가 필요하다. -> bank service (get RegisteredBankAccount)를 위한 port를 생성/사용
-        RegisteredBankAccountAggregateIdentifier registeredBankAccountAggregateIdentifier = getRegisteredBankAccountPort.getRegisteredBankAccount(command.getMembershipId());
 
+        // new RechargingRequestCreatedEvent
+        // banking 정보가 필요해요. -> bank svc (get RegisteredBankAccount) 를 위한. Port.
+        RegisteredBankAccountAggregateIdentifier registeredBankAccountAggregateIdentifier
+                = getRegisteredBankAccountPort.getRegisteredBankAccount(command.getMembershipId());
+
+        // Saga Start
         apply(new RechargingRequestCreatedEvent(
                 command.getRechargingRequestId(),
                 command.getMembershipId(),
                 command.getAmount(),
-                registeredBankAccountAggregateIdentifier.getBankName(),
+                registeredBankAccountAggregateIdentifier.getAggregateIdentifier(),
                 registeredBankAccountAggregateIdentifier.getBankName(),
                 registeredBankAccountAggregateIdentifier.getBankAccountNumber()
         ));

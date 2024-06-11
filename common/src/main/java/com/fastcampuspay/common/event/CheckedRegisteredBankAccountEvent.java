@@ -12,14 +12,10 @@ public class CheckedRegisteredBankAccountEvent {
     private String checkRegisteredBankAccountId;
     private String membershipId;
     private boolean isChecked;
-
     private int amount;
-
     private String firmbankingRequestAggregateIdentifier;
-
     private String fromBankName;
     private String fromBankAccountNumber;
-
     @Override
     public String toString() {
         return "CheckedRegisteredBankAccountEvent{" +

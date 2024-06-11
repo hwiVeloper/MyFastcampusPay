@@ -15,7 +15,7 @@ public class TaskResultProducer {
     private final String topic;
 
     public TaskResultProducer(@Value("${kafka.clusters.bootstrapservers}") String bootstrapServers,
-                        @Value("${task.result.topic}")String topic) {
+                              @Value("${task.result.topic}")String topic) {
 
         Properties props = new Properties();
         props.put("bootstrap.servers", bootstrapServers);
@@ -26,7 +26,7 @@ public class TaskResultProducer {
         this.topic = topic;
     }
 
-    public void sendTaskResult(String key, Object task) {
+    public void sendTaskResult (String key, Object task) {
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonStringToProduce;
         try {

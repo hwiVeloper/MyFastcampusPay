@@ -1,6 +1,9 @@
 package com.fastcampuspay.money.adapter.axon.saga;
 
-import com.fastcampuspay.common.event.*;
+import com.fastcampuspay.common.event.CheckRegisteredBankAccountCommand;
+import com.fastcampuspay.common.event.CheckedRegisteredBankAccountEvent;
+import com.fastcampuspay.common.event.RequestFirmbankingFinishedEvent;
+import com.fastcampuspay.common.event.RollbackFirmbankingFinishedEvent;
 import com.fastcampuspay.money.adapter.axon.event.RechargingRequestCreatedEvent;
 import com.fastcampuspay.money.adapter.out.persistence.MemberMoneyJpaEntity;
 import com.fastcampuspay.money.application.port.out.IncreaseMoneyPort;
@@ -31,38 +34,36 @@ public class MoneyRechargeSaga {
 
     @StartSaga
     @SagaEventHandler(associationProperty = "rechargingRequestId")
-    public void handle(RechargingRequestCreatedEvent event) {
+    public void handle(RechargingRequestCreatedEvent event){
         System.out.println("RechargingRequestCreatedEvent Start saga");
-
-//        String rechargingRequestId = event.getRechargingRequestId();
-//
-//        SagaLifecycle.associateWith("rechargingRequestId", rechargingRequestId);
 
         String checkRegisteredBankAccountId = UUID.randomUUID().toString();
         SagaLifecycle.associateWith("checkRegisteredBankAccountId", checkRegisteredBankAccountId);
 
-        // 충전 요청이 시작되었다.
+        // "충전 요청" 이 시작 되었다.
 
         // 뱅킹의 계좌 등록 여부 확인하기. (RegisteredBankAccount)
         // CheckRegisteredBankAccountCommand -> Check Bank Account
         // -> axon server -> Banking Service -> Common
 
-        // 기본적으로 axon에서 모든 aggregate의 변경은 aggregate 단위로 되어야 한다.
-        // aggregateIdentifier를 먼저 알아야한다.
-        commandGateway.send(new CheckRegisteredBankAccountCommand(event.getRegisteredBankAccountAggregateIdentifier()
-                , event.getRechargingRequestId()
-                , event.getMembershipId()
-                , checkRegisteredBankAccountId
-                , event.getBankName()
-                , event.getBankAccountNumber()
-                , event.getAmount())
+
+        // 기본적으로 axon framework 에서, 모든 aggregate 의 변경은, aggregate 단위로 되어야만 한다.
+        commandGateway.send(new CheckRegisteredBankAccountCommand(
+                event.getRegisteredBankAccountAggregateIdentifier(),
+                event.getRechargingRequestId(),
+                event.getMembershipId(),
+                checkRegisteredBankAccountId,
+                event.getBankName(),
+                event.getBankAccountNumber(),
+                event.getAmount()
+                )
         ).whenComplete(
                 (result, throwable) -> {
                     if (throwable != null) {
                         throwable.printStackTrace();
-                        System.out.println("CheckRegisteredBankAccountCommand Command Failed");
+                        System.out.println("CheckRegisteredBankAccountCommand Command failed");
                     } else {
-                        System.out.println("CheckRegisteredBankAccountCommand Command Success");
+                        System.out.println("CheckRegisteredBankAccountCommand Command success");
                     }
                 }
         );
@@ -81,15 +82,16 @@ public class MoneyRechargeSaga {
         String requestFirmbankingId = UUID.randomUUID().toString();
         SagaLifecycle.associateWith("requestFirmbankingId", requestFirmbankingId);
 
-        // 2. 송금 요청
-        commandGateway.send(new RequestFirmbankingCommand(
+        // 송금 요청
+        // 고객 계좌 -> 법인 계좌
+        commandGateway.send(new com.fastcampuspay.common.command.RequestFirmbankingCommand(
                 requestFirmbankingId,
                 event.getFirmbankingRequestAggregateIdentifier()
                 , event.getRechargingRequestId()
                 , event.getMembershipId()
                 , event.getFromBankName()
                 , event.getFromBankAccountNumber()
-                , "fastcampus" // 법인 계좌
+                , "fastcampus"
                 , "123456789"
                 , event.getAmount()
         )).whenComplete(
@@ -125,7 +127,7 @@ public class MoneyRechargeSaga {
             // 실패 시, 롤백 이벤트
             String rollbackFirmbankingId = UUID.randomUUID().toString();
             SagaLifecycle.associateWith("rollbackFirmbankingId", rollbackFirmbankingId);
-            commandGateway.send(new RollbackFirmbankingRequestCommand(
+            commandGateway.send(new com.fastcampuspay.common.command.RollbackFirmbankingRequestCommand(
                     rollbackFirmbankingId
                     ,event.getRequestFirmbankingAggregateIdentifier()
                     , event.getRechargingRequestId()

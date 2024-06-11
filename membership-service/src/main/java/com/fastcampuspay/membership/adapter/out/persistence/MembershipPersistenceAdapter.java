@@ -7,45 +7,46 @@ import com.fastcampuspay.membership.application.port.out.RegisterMembershipPort;
 import com.fastcampuspay.membership.domain.Membership;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 @PersistenceAdapter
 @RequiredArgsConstructor
 public class MembershipPersistenceAdapter implements RegisterMembershipPort, FindMembershipPort, ModifyMembershipPort {
 
-    private final SpringDataMembershipRepository repository;
-
+    private final SpringDataMembershipRepository membershipRepository;
     @Override
-    public MembershipJpaEntity createMembership(Membership.MembershipName membershipName
-            , Membership.MembershipEmail membershipEmail
-            , Membership.MembershipAddress membershipAddress
-            , Membership.MembershipIsValid membershipIsValid
-            , Membership.MembershipIsCorp membershipIsCorp) {
-        return repository.save(
+    public MembershipJpaEntity createMembership(Membership.MembershipName membershipName, Membership.MembershipEmail membershipEmail, Membership.MembershipAddress membershipAddress, Membership.MembershipIsValid membershipIsValid, Membership.MembershipIsCorp membershipIsCorp) {
+        return membershipRepository.save(
             new MembershipJpaEntity(
-                membershipName.getMembershipName()
-                , membershipEmail.getMembershipEmail()
-                , membershipAddress.getMembershipAddress()
-                , membershipIsValid.isMembershipIsValid()
-                , membershipIsCorp.isMembershipIsCorp()
+                membershipName.getNameValue(),
+                membershipEmail.getEmailValue(),
+                membershipAddress.getAddressValue(),
+                membershipIsValid.isValidValue(),
+                membershipIsCorp.isCorpValue()
             )
         );
     }
 
     @Override
     public MembershipJpaEntity findMembership(Membership.MembershipId membershipId) {
-        return repository.getById(Long.parseLong(membershipId.getMembershipId()));
+        return membershipRepository.getById(Long.parseLong(membershipId.getMembershipId()));
     }
-
 
     @Override
     public MembershipJpaEntity modifyMembership(Membership.MembershipId membershipId, Membership.MembershipName membershipName, Membership.MembershipEmail membershipEmail, Membership.MembershipAddress membershipAddress, Membership.MembershipIsValid membershipIsValid, Membership.MembershipIsCorp membershipIsCorp) {
-        MembershipJpaEntity entity = repository.getById(Long.parseLong(membershipId.getMembershipId()));
+        MembershipJpaEntity entity = membershipRepository.getById(Long.parseLong(membershipId.getMembershipId()));
+        entity.setName(membershipName.getNameValue());
+        entity.setAddress(membershipAddress.getAddressValue());
+        entity.setEmail(membershipEmail.getEmailValue());
+        entity.setCorp(membershipIsCorp.isCorpValue());
+        entity.setValid(membershipIsValid.isValidValue());
 
-        entity.setName(membershipName.getMembershipName());
-        entity.setAddress(membershipAddress.getMembershipAddress());
-        entity.setEmail(membershipEmail.getMembershipEmail());
-        entity.setCorp(membershipIsCorp.isMembershipIsCorp());
-        entity.setValid(membershipIsValid.isMembershipIsValid());
+        return membershipRepository.save(entity);
+    }
 
-        return repository.save(entity);
+    @Override
+    public List<MembershipJpaEntity> findMembershipListByAddress(Membership.MembershipAddress membershipAddress) {
+        String address = membershipAddress.getAddressValue();
+        return membershipRepository.findByAddress(address);
     }
 }

@@ -1,5 +1,6 @@
 package com.fastcampuspay.banking.domain;
 
+import com.fastcampuspay.banking.adapter.axon.aggregate.RegisteredBankAccountAggregate;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,7 +17,6 @@ public class RegisteredBankAccount {
     @Getter private final String bankAccountNumber;
 
     @Getter private final boolean linkedStatusIsValid;
-
     @Getter private final String aggregateIdentifier;
 
     public static RegisteredBankAccount generateRegisteredBankAccount (
@@ -33,7 +33,7 @@ public class RegisteredBankAccount {
             bankName.bankName,
             bankAccountNumber.bankAccountNumber,
             linkedStatusIsValid.linkedStatusIsValid,
-            aggregateIdentifier.aggregateIdentifier
+                aggregateIdentifier.getAggregateIdentifier()
         );
     }
 
@@ -82,6 +82,6 @@ public class RegisteredBankAccount {
         public AggregateIdentifier(String value) {
             this.aggregateIdentifier = value;
         }
-        String aggregateIdentifier ;
+        String aggregateIdentifier;
     }
 }

@@ -9,14 +9,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ModifyMembershipRequest {
     private String membershipId;
-
     private String name;
-
+    private String address;
     private String email;
 
-    private String address;
-
     private boolean isValid;
-
     private boolean isCorp;
 }

@@ -1,15 +1,16 @@
 package com.fastcampuspay.money.adapter.in.web;
 
 import com.fastcampuspay.common.WebAdapter;
-import com.fastcampuspay.money.application.port.in.CreateMemberMoneyCommand;
-import com.fastcampuspay.money.application.port.in.CreateMemberMoneyUseCase;
-import com.fastcampuspay.money.application.port.in.IncreaseMoneyRequestCommand;
-import com.fastcampuspay.money.application.port.in.IncreaseMoneyRequestUseCase;
+import com.fastcampuspay.money.application.port.in.*;
+import com.fastcampuspay.money.domain.MemberMoney;
 import com.fastcampuspay.money.domain.MoneyChangingRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 
 @WebAdapter
@@ -87,4 +88,24 @@ public class RequestMoneyChangingController {
 
         increaseMoneyRequestUseCase.increaseMoneyRequestByEvent(command);
     }
+
+    @PostMapping(path = "/money/decrease-eda")
+    void decreaseMoneyChangingRequestByEvent(@RequestBody IncreaseMoneyChangingRequest request) {
+        IncreaseMoneyRequestCommand command = IncreaseMoneyRequestCommand.builder()
+                .targetMembershipId(request.getTargetMembershipId())
+                .amount(request.getAmount() * -1)
+                .build();
+
+        increaseMoneyRequestUseCase.increaseMoneyRequestByEvent(command);
+    }
+
+    @PostMapping("/money/member-money")
+    List<MemberMoney> getMemberMoneyListByMembershipIds(@RequestBody FindMemberMoneyListByByMembershipIdsRequest request) {
+        FindMemberMoneyListByMembershipIdsCommand command = FindMemberMoneyListByMembershipIdsCommand.builder()
+                .membershipIds(request.getMembershipIds())
+                .build();
+
+        return increaseMoneyRequestUseCase.findMemberMoneyListByMembershipIds(command);
+    }
+
 }

@@ -7,9 +7,12 @@ import com.fastcampuspay.common.UseCase;
 import com.fastcampuspay.money.adapter.axon.command.IncreaseMemberMoneyCommand;
 import com.fastcampuspay.money.adapter.axon.command.MemberMoneyCreatedCommand;
 import com.fastcampuspay.money.adapter.axon.command.RechargingMoneyRequestCreateCommand;
+import com.fastcampuspay.money.adapter.axon.event.RechargingRequestCreatedEvent;
 import com.fastcampuspay.money.adapter.out.persistence.MemberMoneyJpaEntity;
+import com.fastcampuspay.money.adapter.out.persistence.MemberMoneyMapper;
 import com.fastcampuspay.money.adapter.out.persistence.MoneyChangingRequestMapper;
 import com.fastcampuspay.money.application.port.in.*;
+import com.fastcampuspay.money.application.port.out.GetMemberMoneyListPort;
 import com.fastcampuspay.money.application.port.out.GetMembershipPort;
 import com.fastcampuspay.money.application.port.out.IncreaseMoneyPort;
 import com.fastcampuspay.money.application.port.out.SendRechargingMoneyTaskPort;
@@ -33,9 +36,11 @@ public class IncreaseMoneyRequestService implements IncreaseMoneyRequestUseCase,
     private final GetMembershipPort membershipPort;
     private final IncreaseMoneyPort increaseMoneyPort;
     private final MoneyChangingRequestMapper mapper;
+    private final MemberMoneyMapper memberMoneyMapper;
     private final CommandGateway commandGateway;
     private final CreateMemberMoneyPort createMemberMoneyPort;
     private final GetMemberMoneyPort getMemberMoneyPort;
+    private final GetMemberMoneyListPort getMemberMoneyListPort;
 
     @Override
     public MoneyChangingRequest increaseMoneyRequest(IncreaseMoneyRequestCommand command) {
@@ -175,27 +180,26 @@ public class IncreaseMoneyRequestService implements IncreaseMoneyRequestUseCase,
 
     @Override
     public void increaseMoneyRequestByEvent(IncreaseMoneyRequestCommand command) {
-        MemberMoneyJpaEntity memberMoneyJpaEntity = getMemberMoneyPort.getMemberMoney(
-                new MemberMoney.MembershipId(command.getTargetMembershipId())
-        );
-
+        MemberMoneyJpaEntity memberMoneyJpaEntity = getMemberMoneyPort.getMemberMoney(new MemberMoney.MembershipId(command.getTargetMembershipId()));
         String memberMoneyAggregateIdentifier = memberMoneyJpaEntity.getAggregateIdentifier();
 
-        // saga의 시작을 나타내는 커맨드!
+        // Saga 의 시작을 나타내는 커맨드!
         // RechargingMoneyRequestCreateCommand
-        commandGateway.send(new RechargingMoneyRequestCreateCommand(memberMoneyAggregateIdentifier
-                , UUID.randomUUID().toString()
-                , command.getTargetMembershipId()
-                , command.getAmount())
-        )
-        .whenComplete((result, throwable) -> {
-            if (throwable != null) {
-                throwable.printStackTrace();
-                throw new RuntimeException(throwable);
-            } else {
-                System.out.println("result = " + result);
-            }
-        });
+        commandGateway.send(new RechargingMoneyRequestCreateCommand(memberMoneyAggregateIdentifier,
+                UUID.randomUUID().toString(),
+                command.getTargetMembershipId(),
+                command.getAmount())
+        ).whenComplete(
+                (result, throwable) -> {
+                    if (throwable != null) {
+                        throwable.printStackTrace();
+                        throw new RuntimeException(throwable);
+                    } else {
+                        System.out.println("result = " + result); // aggregateIdentifier
+                    }
+                }
+        );
+
 //        MemberMoneyJpaEntity memberMoneyJpaEntity = getMemberMoneyPort.getMemberMoney(
 //                new MemberMoney.MembershipId(command.getTargetMembershipId())
 //        );
@@ -220,5 +224,18 @@ public class IncreaseMoneyRequestService implements IncreaseMoneyRequestUseCase,
 //                    }
 //                }
 //        );
+    }
+
+    @Override
+    public List<MemberMoney> findMemberMoneyListByMembershipIds(FindMemberMoneyListByMembershipIdsCommand command) {
+        // 여러 개의 membership Ids 기준으로, member money 정보를 가져온다.
+        List<MemberMoneyJpaEntity> memberMoneyJpaEntityList = getMemberMoneyListPort.getMemberMoneyPort(command.getMembershipIds());
+        List<MemberMoney> memberMoneyList = new ArrayList<>();
+
+        for (MemberMoneyJpaEntity memberMoneyJpaEntity : memberMoneyJpaEntityList) {
+            memberMoneyList.add(memberMoneyMapper.mapToDomainEntity(memberMoneyJpaEntity));
+        }
+
+        return memberMoneyList;
     }
 }
