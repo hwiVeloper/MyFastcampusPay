@@ -2,11 +2,13 @@ package com.fastcampuspay.money.aggregation.adapter.out.service;
 
 import com.fastcampuspay.common.CommonHttpClient;
 import com.fastcampuspay.money.aggregation.application.port.out.GetMembershipPort;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class MembershipServiceAdapter implements GetMembershipPort {
@@ -29,9 +31,12 @@ public class MembershipServiceAdapter implements GetMembershipPort {
             String jsonResponse = commonHttpClient.sendGetRequest(url).body();
 
             ObjectMapper objectMapper = new ObjectMapper();
-             Membership membership = objectMapper.readValue(jsonResponse, Membership.class);
+            List<Membership> membershipList = objectMapper.readValue(jsonResponse, new TypeReference<>() {});
+            List<String> membershipIds = membershipList.stream()
+                    .map(Membership::getMembershipId)
+                    .collect(Collectors.toList());
 
-            return null;
+            return membershipIds;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
