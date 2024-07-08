@@ -29,12 +29,15 @@ public class RegisterMembershipCommand extends SelfValidating<RegisterMembership
 
     private final boolean isCorp;
 
-    public RegisterMembershipCommand(String name, String email, String address, boolean isValid, boolean isCorp) {
+    private final String refreshToken;
+
+    public RegisterMembershipCommand(String name, String email, String address, boolean isValid, boolean isCorp, String refreshToken) {
         this.name = name;
         this.email = email;
         this.address = address;
         this.isValid = isValid;
         this.isCorp = isCorp;
+        this.refreshToken = refreshToken;
 
         this.validateSelf();
     }

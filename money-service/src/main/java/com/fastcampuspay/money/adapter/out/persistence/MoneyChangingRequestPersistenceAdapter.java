@@ -86,7 +86,7 @@ public class MoneyChangingRequestPersistenceAdapter implements IncreaseMoneyPort
     @Override
     public List<MemberMoneyJpaEntity> getMemberMoneyPort(List<String> membershipIds) {
         // membershipIds 기준으로 여러 개의 MemberMonetJpaEntity를 가져온다.
-        return memberMoneyRepository.findMemberMoneyListByMembershipIds(convertMembershipIds(membershipIds));;
+        return memberMoneyRepository.findMemberMoneyListByMembershipIds(convertMembershipIds(membershipIds));
     }
 
     private List<Long> convertMembershipIds(List<String> membershipIds) {

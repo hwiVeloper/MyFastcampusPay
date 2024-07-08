@@ -33,7 +33,7 @@ public class MoneyServiceAdapter implements GetMoneySumPort {
 
         try {
             FindMemberMoneyRequest request = new FindMemberMoneyRequest(membershipIds);
-            String jsonResponse = moneyServiceHttpClient.sendPostRequest(url, mapper.writeValueAsString(request)).get().body();
+            String jsonResponse = moneyServiceHttpClient.sendPostRequest(url, mapper.writeValueAsString(request)).body();
 
             // N명 고객의, 각 고객의 MemberMoney를 가져와요.
             List<MemberMoney> memberMoneyList = mapper.readValue(jsonResponse, new TypeReference<>() {});
